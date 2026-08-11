@@ -1,0 +1,26 @@
+{
+  "_description": "关键词→部门映射规则。提取脚本遍历每个任务的标题/项目名/描述，匹配得分最高的部门作为 primary，其余作为 collaborators。",
+  "rules": [
+    { "department": "ceo", "keywords": ["战略","方向","架构","角色","治理","决策","跨部门","协调","差异化","商业模式","资源配置","OKR","复盘","Harness","审批"], "weight": 1.0 },
+    { "department": "cfo", "keywords": ["财务","报表","预算","成本","现金流","投资","黄金","基金","税务","赔率","建模","估值","CFO","FOMC","会计","利润","损益","支出","收入","融资","盈米"], "weight": 1.0 },
+    { "department": "cto", "keywords": ["系统","自动化","CDN","WordPress","Skill","Config","数据管道","技术","CTO","运维","Node","Python","API","代码","部署","插件","性能","Scrapling","cron","修复","集成","安装","配置","反向代理","监控","管道","格式转换","索引","版本"], "weight": 1.0 },
+    { "department": "cpo", "keywords": ["产品","设计","体验","看板","模板","PRD","原型","评测","UI","UX","界面","交互","规范","白屏","仪表盘","旅程","蓝图","草稿"], "weight": 1.0 },
+    { "department": "cmo", "keywords": ["内容","分发","小红书","微博","抖音","公众号","营销","品牌","投放","文案","标题","脚本","编辑","媒体","发布","运营策略","商品目录","图片","CMO","海露","商品"], "weight": 1.0 },
+    { "department": "coo", "keywords": ["运营","SOP","流程","效率","周报","日报","复盘","看板","项目状态","排期","交付","任务统计","任务日志","进度","Health","COO"], "weight": 1.0 },
+    { "department": "cro", "keywords": ["安全","合规","审计","风险","隐私","认证","授权","加密","CRO","应急","漏洞","评估","检查","边界","休眠"], "weight": 1.0 },
+    { "department": "meeting", "keywords": ["会议","评审","对齐","讨论","预审","方案设计"], "weight": 1.2 }
+  ],
+  "secondary_rules": [
+    { "department": "ceo", "keywords": ["架构","评审","方案"], "weight": 0.6, "role": "collaborator" },
+    { "department": "cfo", "keywords": ["数据","报告","分析"], "weight": 0.5, "role": "collaborator" },
+    { "department": "cto", "keywords": ["自动化","数据","配置","发布","生成","脚本"], "weight": 0.5, "role": "collaborator" },
+    { "department": "cpo", "keywords": ["设计","界面","体验","模板"], "weight": 0.5, "role": "collaborator" },
+    { "department": "cmo", "keywords": ["发布","分发","内容","文案"], "weight": 0.5, "role": "collaborator" },
+    { "department": "coo", "keywords": ["流程","监控","SOP"], "weight": 0.5, "role": "collaborator" },
+    { "department": "cro", "keywords": ["安全","合规","审计"], "weight": 0.5, "role": "collaborator" }
+  ],
+  "auto_detect": {
+    "keywords": ["自动化","定时","cron","automation","自动更新","每日更新","定时任务","调度"],
+    "department": "cto"
+  }
+}
