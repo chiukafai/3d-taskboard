@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFO 财务中心 · 卡通海岸风样板间 v3</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:#3a5a7a;overflow:hidden;height:100vh;width:100vw}
+  #c{position:fixed;inset:0;z-index:1}
+  #tag{position:fixed;top:18px;left:20px;z-index:10;padding:10px 18px;background:rgba(255,255,255,.9);color:#3a4a5a;border-radius:14px;font-size:13px;letter-spacing:.5px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  #tag b{color:#e8786a}
+  #hint{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:10;padding:10px 22px;background:rgba(255,255,255,.9);color:#3a4a5a;border-radius:22px;font-size:12px;letter-spacing:.4px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  #hint span{color:#e8786a;font-weight:600}
+</style>
+</head>
+<body>
+<div id="tag"> CFO 财务中心 · <b>卡通海岸风</b> 样板间 v3 · 物件协调</div>
+<div id="hint">拖动旋转 · 滚轮缩放 · <span>弧形木板桌 · 宝藏箱 · 贝壳罐 · 绳索装饰</span></div>
+<div id="c"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://esm.sh/three@0.157.0/build/three.module.js",
+  "three/addons/": "https://esm.sh/three@0.157.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+const W=window.innerWidth,H=window.innerHeight;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color('#bfe0f5');
+scene.fog=new THREE.Fog('#cfe8f5',16,34);
+
+const camera=new THREE.PerspectiveCamera(40,W/H,0.1,100);
+camera.position.set(6.8,4.4,8.6);
+
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(W,H);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+document.getElementById('c').appendChild(renderer.domElement);
+
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.target.set(0,1.0,0);controls.enableDamping=true;controls.dampingFactor=0.08;
+controls.minDistance=4.5;controls.maxDistance=16;
+controls.maxPolarAngle=Math.PI/2.05;controls.minPolarAngle=0.18;
+controls.update();
+
+/* ===== 卡通着色 4 级色阶 ===== */
+const steps=new Uint8Array([0x55,0x99,0xcc,0xff]);
+const gradientMap=new THREE.DataTexture(steps,steps.length,1,THREE.RedFormat);
+gradientMap.minFilter=THREE.NearestFilter;gradientMap.magFilter=THREE.NearestFilter;
+gradientMap.generateMipmaps=false;gradientMap.needsUpdate=true;
+
+function TM(c,o={}){return new THREE.MeshToonMaterial({color:c,gradientMap:gradientMap,...o});}
+function rbox(w,h,d,mat,r=0.09){const g=new THREE.Mesh(new RoundedBoxGeometry(w,h,d,5,r),typeof mat==='string'?TM(mat):mat);g.castShadow=true;g.receiveShadow=true;return g;}
+function box(w,h,d,mat){return rbox(w,h,d,mat,Math.min(w,h,d)*0.18);}
+function cyl(rt,rb,h,mat,seg=28){const g=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),typeof mat==='string'?TM(mat):mat);g.castShadow=true;g.receiveShadow=true;return g;}
+function sphere(r,mat,seg=20){const g=new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),typeof mat==='string'?TM(mat):mat);g.castShadow=true;g.receiveShadow=true;return g;}
+function torus(r,t,mat,seg=24,arc=7){const g=new THREE.Mesh(new THREE.TorusGeometry(r,t,seg,seg,arc),typeof mat==='string'?TM(mat):mat);g.castShadow=true;g.receiveShadow=true;return g;}
+// 烘焙变换到几何体（用于合并前）
+function bake(geo,x,y,z,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1){
+  const c=geo.clone();
+  c.applyMatrix4(new THREE.Matrix4().compose(
+    new THREE.Vector3(x,y,z),
+    new THREE.Quaternion().setFromEuler(new THREE.Euler(rx,ry,rz)),
+    new THREE.Vector3(sx,sy,sz)));
+  return c;
+}
+// 合并多个几何体为一件完整物件（消除接缝，一体成型）
+function merged(parts,mat){
+  const idx=parts.filter(g=>g.index!==null).length;
+  let geos=parts;
+  if(idx>0&&idx<parts.length) geos=parts.map(g=>g.index!==null?g.toNonIndexed():g);
+  const g=mergeGeometries(geos);
+  const m=new THREE.Mesh(g,typeof mat==='string'?TM(mat):mat);m.castShadow=true;m.receiveShadow=true;return m;
+}
+
+// 海岸木板纹理（竖向板缝，对应风格图的弧形木柜台）
+function plankTex(base,dark,gapCol,vertical=true){
+  const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');
+  x.fillStyle=base;x.fillRect(0,0,512,512);
+  const n=7,pw=512/n;
+  for(let i=0;i<n;i++){
+    x.fillStyle=`rgba(${dark},${0.06+Math.random()*0.06})`;
+    if(vertical)x.fillRect(i*pw,0,pw,512);else x.fillRect(0,i*pw,512,pw);
+    x.strokeStyle=gapCol;x.lineWidth=2;
+    if(vertical){x.beginPath();x.moveTo(i*pw,0);x.lineTo(i*pw,512);x.stroke();}
+    else{x.beginPath();x.moveTo(0,i*pw);x.lineTo(512,i*pw);x.stroke();}
+  }
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;
+}
+
+const MAT={
+  floor:new THREE.MeshToonMaterial({map:plankTex('#f0d090','180,130,60','#b8884c'),gradientMap}),
+  wallCream:TM('#faf2e2'),
+  wallBlue:TM('#c8def0'),
+  trim:TM('#d09858'),
+  beam:TM('#d8a060'),
+  // 海岸木家具（明亮蜜色，竖向板缝）
+  coastDesk:new THREE.MeshToonMaterial({map:plankTex('#e8b870','150,95,40','#a86838',true),gradientMap}),
+  coastWood:TM('#d8a060'),
+  coastWoodDark:TM('#b07840'),
+  rope:TM('#e0c890'),
+  brass:TM('#e8c060'),
+  metalDark:TM('#6a6258'),
+  chairCoral:TM('#e8786a'),
+  chairDark:TM('#c4584a'),
+  leaf:TM('#5cc888'),
+  leafDark:TM('#3eb068'),
+  pot:TM('#d09868'),
+  potBlue:TM('#7ab8d8'),
+  glassFrame:TM('#c89868'),
+  lampShade:new THREE.MeshToonMaterial({color:'#ffe080',gradientMap,emissive:'#ffcc50',emissiveIntensity:0.6,transparent:true,opacity:0.95}),
+  jarGlass:new THREE.MeshPhysicalMaterial({color:'#dff0ff',roughness:0.05,metalness:0,transparent:true,opacity:0.3,transmission:0.6}),
+  mugCoral:TM('#ff8870'),
+  keyboard:TM('#e8e8e0'),
+  note:TM('#fff060'),
+  note2:TM('#ffc870'),
+  shellPink:TM('#f0a8b0'),
+  shellCream:TM('#fff0d8'),
+  lighthouseR:TM('#e85858'),
+  lighthouseW:TM('#fff8f0'),
+};
+
+/* ===== 灯光 ===== */
+scene.add(new THREE.AmbientLight('#fff0e0',0.8));
+const winLight=new THREE.DirectionalLight('#dceeff',2.4);
+winLight.position.set(0,4.2,-6.5);winLight.castShadow=true;
+winLight.shadow.mapSize.set(2048,2048);
+winLight.shadow.camera.left=-6;winLight.shadow.camera.right=6;
+winLight.shadow.camera.top=6;winLight.shadow.camera.bottom=-6;
+winLight.shadow.camera.near=1;winLight.shadow.camera.far=20;winLight.shadow.bias=-0.0008;
+scene.add(winLight);
+const fill=new THREE.DirectionalLight('#ffe8b0',0.6);fill.position.set(7,5,6);scene.add(fill);
+const pendantLight=new THREE.PointLight('#ffd870',1.8,10,1.6);pendantLight.position.set(0,2.4,0.4);scene.add(pendantLight);
+const deskLampLight=new THREE.PointLight('#ffb858',0.8,3.5,2);deskLampLight.position.set(-1.35,1.28,0.05);scene.add(deskLampLight);
+
+/* ===== 房间结构 ===== */
+const ROOM={w:7,d:6,h:2.8},hw=ROOM.w/2,hd=ROOM.d/2;
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(ROOM.w,ROOM.d),MAT.floor);
+floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+// 海岸风地毯（波浪/贝壳花纹）
+function rugTex(){
+  const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');
+  x.fillStyle='#bcd8e8';x.fillRect(0,0,256,256);
+  x.strokeStyle='#88b0c8';x.lineWidth=3;
+  for(let r=20;r<120;r+=24){x.beginPath();x.arc(128,128,r,0,Math.PI*2);x.stroke();}
+  x.fillStyle='#a8c8dc';
+  for(let i=0;i<8;i++){const a=i/8*Math.PI*2;x.beginPath();x.arc(128+Math.cos(a)*90,128+Math.sin(a)*90,8,0,Math.PI*2);x.fill();}
+  x.strokeStyle='#88b0c8';x.lineWidth=6;x.strokeRect(12,12,232,232);
+  return new THREE.CanvasTexture(c);
+}
+const rug=new THREE.Mesh(new THREE.PlaneGeometry(3.2,2.4),new THREE.MeshToonMaterial({map:rugTex(),gradientMap}));
+rug.rotation.x=-Math.PI/2;rug.position.set(0,0.012,0.6);rug.receiveShadow=true;scene.add(rug);
+
+const backWall=box(ROOM.w,ROOM.h,0.18,MAT.wallCream);backWall.position.set(0,ROOM.h/2,-hd);scene.add(backWall);
+const leftWall=box(0.18,ROOM.h,ROOM.d,MAT.wallBlue);leftWall.position.set(-hw,ROOM.h/2,0);scene.add(leftWall);
+const rightWall=box(0.18,ROOM.h,ROOM.d,MAT.wallCream);rightWall.position.set(hw,ROOM.h/2,0);scene.add(rightWall);
+const frontL=box(1.6,ROOM.h,0.18,MAT.wallBlue);frontL.position.set(-hw+0.8,ROOM.h/2,hd);scene.add(frontL);
+const frontR=box(1.6,ROOM.h,0.18,MAT.wallCream);frontR.position.set(hw-0.8,ROOM.h/2,hd);scene.add(frontR);
+function baseboard(x,z,w,d){const b=box(w,0.14,d,MAT.trim);b.position.set(x,0.07,z);b.castShadow=false;scene.add(b);}
+baseboard(0,-hd+0.09,ROOM.w,0.18);baseboard(-hw+0.09,0,0.18,ROOM.d);baseboard(hw-0.09,0,0.18,ROOM.d);
+baseboard(-hw+1.6,hd-0.09,1.6,0.18);baseboard(hw-1.6,hd-0.09,1.6,0.18);
+const beam1=box(ROOM.w,0.24,0.24,MAT.beam);beam1.position.set(0,ROOM.h-0.12,-hd+1.5);scene.add(beam1);
+const beam2=box(ROOM.w,0.24,0.24,MAT.beam);beam2.position.set(0,ROOM.h-0.12,hd-1.5);scene.add(beam2);
+const crossBeam=box(0.22,0.18,ROOM.d-3,MAT.beam);crossBeam.position.set(0,ROOM.h-0.1,0.4);scene.add(crossBeam);
+
+/* ===== 拱形大窗 + 卡通海景 ===== */
+function sceneryTex(){
+  const c=document.createElement('canvas');c.width=1024;c.height=768;const x=c.getContext('2d');
+  let g=x.createLinearGradient(0,0,0,768);g.addColorStop(0,'#a8d8ff');g.addColorStop(0.6,'#dff0ff');g.addColorStop(1,'#fff0d0');
+  x.fillStyle=g;x.fillRect(0,0,1024,768);
+  let rg=x.createRadialGradient(720,230,10,720,230,160);rg.addColorStop(0,'rgba(255,250,180,1)');rg.addColorStop(1,'rgba(255,250,180,0)');
+  x.fillStyle=rg;x.fillRect(0,0,1024,768);
+  x.fillStyle='#fff8c0';x.beginPath();x.arc(720,230,42,0,7);x.fill();
+  x.fillStyle='#b0d0a0';x.beginPath();x.moveTo(0,560);
+  x.arc(150,560,120,Math.PI,0);x.arc(380,560,140,Math.PI,0);x.arc(640,560,130,Math.PI,0);x.arc(880,560,110,Math.PI,0);
+  x.lineTo(1024,768);x.lineTo(0,768);x.closePath();x.fill();
+  x.fillStyle='#88c098';x.beginPath();x.moveTo(0,640);
+  x.arc(200,640,100,Math.PI,0);x.arc(450,640,120,Math.PI,0);x.arc(720,640,110,Math.PI,0);x.arc(950,640,90,Math.PI,0);
+  x.lineTo(1024,768);x.lineTo(0,768);x.closePath();x.fill();
+  x.fillStyle='#8ccae0';x.fillRect(0,650,1024,118);
+  x.fillStyle='rgba(255,250,200,0.6)';for(let i=0;i<12;i++)x.fillRect(650+i*10,656+i*7,70+i*4,3);
+  x.fillStyle='rgba(255,255,255,0.95)';
+  function cloud(cx,cy,s){x.save();x.translate(cx,cy);x.scale(s,s);
+    x.beginPath();x.arc(0,0,30,0,7);x.arc(34,-8,26,0,7);x.arc(64,2,24,0,7);x.arc(26,12,28,0,7);x.arc(-6,8,22,0,7);x.fill();x.restore();}
+  cloud(180,150,1.3);cloud(500,100,1);cloud(820,170,1.1);cloud(350,200,0.8);
+  return new THREE.CanvasTexture(c);
+}
+const winG=new THREE.Group();const winW=3.4,winH=2.2,winY=1.0;
+const scenery=new THREE.Mesh(new THREE.PlaneGeometry(winW+0.3,winH+0.6),new THREE.MeshBasicMaterial({map:sceneryTex()}));
+scenery.position.set(0,winY+winH/2-0.1,-hd-0.02);winG.add(scenery);
+function archFrame(){
+  const f=new THREE.Group();const fm=MAT.glassFrame;
+  const afL=cyl(0.07,0.07,winH,fm);afL.position.set(-winW/2,winY+winH/2,0);f.add(afL);
+  const afR=cyl(0.07,0.07,winH,fm);afR.position.set(winW/2,winY+winH/2,0);f.add(afR);
+  const afB=box(winW+0.14,0.14,0.1,fm);afB.position.set(0,winY,0);f.add(afB);
+  const arcR=winW/2;
+  for(let i=0;i<=16;i++){const a=Math.PI-i*(Math.PI/16);
+    const seg=cyl(0.07,0.07,0.18,fm,8);seg.position.set(Math.cos(a)*arcR,winY+winH+Math.sin(a)*arcR,0);seg.rotation.z=a-Math.PI/2;f.add(seg);}
+  const afMullV=box(0.08,winH,0.08,fm);afMullV.position.set(0,winY+winH/2,0.02);f.add(afMullV);
+  const afMullH=box(winW,0.08,0.08,fm);afMullH.position.set(0,winY+winH/2,0.02);f.add(afMullH);
+  return f;
+}
+winG.add(archFrame());
+const glass=new THREE.Mesh(new THREE.PlaneGeometry(winW-0.1,winH-0.1),
+  new THREE.MeshPhysicalMaterial({color:'#dceeff',roughness:0.05,metalness:0,transparent:true,opacity:0.15,transmission:0.5}));
+glass.position.set(0,winY+winH/2,-hd+0.04);winG.add(glass);
+winG.position.z=-hd+0.02;scene.add(winG);
+const sill=box(winW+0.5,0.12,0.3,MAT.trim);sill.position.set(0,winY-0.06,-hd+0.1);scene.add(sill);
+
+/* ===== 绳索花环（风格图标志：梁上缠航海绳） ===== */
+const ropeG=new THREE.Group();
+// 横梁上缠绕的粗绳（两段梁各缠一道）
+[[-hd+1.5],[hd-1.5]].forEach(([z])=>{
+  const wrap=torus(0.16,0.045,MAT.rope,16,Math.PI*2);wrap.position.set(0.6,ROOM.h-0.12,z);wrap.rotation.x=Math.PI/2;ropeG.add(wrap);
+  const wrap2=torus(0.16,0.045,MAT.rope,16,Math.PI*2);wrap2.position.set(-0.7,ROOM.h-0.12,z);wrap2.rotation.x=Math.PI/2;ropeG.add(wrap2);
+});
+// 梁间垂挂的绳索装饰（流苏）
+for(let i=-1;i<=1;i+=2){
+  const drape=cyl(0.012,0.012,0.5,MAT.rope,8);drape.position.set(i*1.2,ROOM.h-0.35,0.4);drape.rotation.z=i*0.1;ropeG.add(drape);
+  // 绳端绳结球
+  const knot=sphere(0.04,MAT.rope,10);knot.position.set(i*1.25,ROOM.h-0.6,0.4);ropeG.add(knot);
+}
+scene.add(ropeG);
+
+/* ===== 圆润吊灯（绳索吊，对应风格图） ===== */
+const pendantG=new THREE.Group();
+const cord=cyl(0.022,0.022,0.7,MAT.rope,8);cord.position.set(0,2.75,0.4);pendantG.add(cord);
+const shade=new THREE.Mesh(new THREE.SphereGeometry(0.24,28,18,0,Math.PI*2,0,Math.PI*0.55),MAT.lampShade);
+shade.scale.set(1,0.9,1);shade.position.set(0,2.42,0.4);shade.rotation.x=Math.PI;pendantG.add(shade);
+const cap=cyl(0.22,0.22,0.05,MAT.metalDark,16);cap.position.set(0,2.54,0.4);pendantG.add(cap);
+const bulb=sphere(0.1,new THREE.MeshBasicMaterial({color:'#fff0b0'}));bulb.position.set(0,2.4,0.4);pendantG.add(bulb);
+// 灯罩与绳交接处的绳结
+const pKnot=sphere(0.05,MAT.rope,12);pKnot.position.set(0,2.6,0.4);pendantG.add(pKnot);
+scene.add(pendantG);
+
+/* ============================================================
+   海岸风家具（物件本身协调卡通海岸风）
+   1. 弧形木板办公桌（风格图的弧形木柜台）
+   2. 宝藏箱式保险柜（海岸+财务=宝藏）
+   3. 贝壳玻璃罐置物架（替代铁皮文件柜）
+   4. 珊瑚色圆润办公椅
+   5. 悬挂绿植 / 落地绿植 / 桌面多肉
+   6. 灯塔摆件 / 贝壳摆件 / 沙滩明信片墙
+============================================================ */
+
+// --- 1. 弧形木板办公桌（前面板弧形 + 竖向板缝蜜色木） ---
+const deskG=new THREE.Group();
+const DW=2.6,DD=1.15;
+// 桌面（厚圆角板）
+const dTop=box(DW,0.08,DD,MAT.coastDesk);dTop.position.set(0,0.78,0);deskG.add(dTop);
+// 前面板：用半圆柱做出弧形前台（风格图弧形柜台）
+const frontCurve=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.7,24,1,false,0,Math.PI),
+  MAT.coastDesk);frontCurve.scale.set(DW/1.1,1,0.7);
+frontCurve.position.set(0,0.42,DD/2-0.05);frontCurve.rotation.set(-Math.PI/2,0,0);deskG.add(frontCurve);
+// 桌后侧板
+const backPanel=box(DW,0.7,0.06,MAT.coastWood);backPanel.position.set(0,0.42,-DD/2+0.03);deskG.add(backPanel);
+// 桌腿（粗壮圆角，海岸风）
+[[-DW/2+0.15,-DD/2+0.15],[DW/2-0.15,-DD/2+0.15],[-DW/2+0.15,DD/2-0.15],[DW/2-0.15,DD/2-0.15]].forEach(([lx,lz])=>{
+  const leg=box(0.1,0.78,0.1,MAT.coastWoodDark);leg.position.set(lx,0.39,lz);deskG.add(leg);
+});
+// 抽屉（弧形前板上的圆角抽屉 + 绳环拉手）
+const drawer=rbox(0.42,0.22,0.06,MAT.coastWood,0.04);drawer.position.set(0,0.5,DD/2-0.02);deskG.add(drawer);
+const drawerPull=torus(0.04,0.012,MAT.rope,12,Math.PI*2);drawerPull.position.set(0,0.5,DD/2+0.02);drawerPull.rotation.x=Math.PI/2;deskG.add(drawerPull);
+// 桌底藤编收纳筐（海岸风）
+const basketG=new THREE.Group();
+const basket=cyl(0.22,0.18,0.28,MAT.rope,20);basket.position.y=0.14;basketG.add(basket);
+const basketRim=cyl(0.22,0.22,0.05,MAT.coastWoodDark,20);basketRim.position.y=0.28;basketG.add(basketRim);
+basketG.position.set(-0.6,0,0.05);basketG.scale.set(1,1,1.1);deskG.add(basketG);
+
+// 双显示器（圆角厚实卡通款）
+[[-0.42],[0.42]].forEach(([ox])=>{
+  const mon=rbox(0.6,0.38,0.06,TM('#2a2832'),0.05);mon.position.set(ox,1.05,-0.15);deskG.add(mon);
+  const scr=new THREE.Mesh(new THREE.PlaneGeometry(0.52,0.34),new THREE.MeshBasicMaterial({color:'#5ab0d0'}));scr.position.set(ox,1.05,-0.12);deskG.add(scr);
+  const bar=new THREE.Mesh(new THREE.PlaneGeometry(0.32,0.04),new THREE.MeshBasicMaterial({color:'#7ad890'}));bar.position.set(ox-0.05,1.12,-0.115);deskG.add(bar);
+  const bar2=new THREE.Mesh(new THREE.PlaneGeometry(0.2,0.03),new THREE.MeshBasicMaterial({color:'#ffd860'}));bar2.position.set(ox-0.1,1.0,-0.115);deskG.add(bar2);
+  const stand=rbox(0.18,0.1,0.2,MAT.metalDark,0.03);stand.position.set(ox,0.88,-0.13);deskG.add(stand);
+  const pole=cyl(0.04,0.04,0.14,MAT.metalDark,8);pole.position.set(ox,0.94,-0.13);deskG.add(pole);
+});
+// 圆角键盘
+const kb=rbox(0.5,0.03,0.17,MAT.keyboard,0.03);kb.position.set(0,0.82,0.3);deskG.add(kb);
+const mouse=sphere(0.06,MAT.keyboard,12);mouse.scale.set(1.2,0.5,1.7);mouse.position.set(0.42,0.825,0.32);deskG.add(mouse);
+// 珊瑚色咖啡杯
+const mugG=new THREE.Group();
+const mug=cyl(0.07,0.06,0.11,MAT.mugCoral,20);mugG.add(mug);
+const mugHandle=torus(0.035,0.012,MAT.mugCoral,12,Math.PI);mugHandle.position.set(0.07,0,0);mugHandle.rotation.y=Math.PI/2;mugG.add(mugHandle);
+const coffee=cyl(0.058,0.058,0.022,TM('#4a3018'),20);coffee.position.y=0.045;mugG.add(coffee);
+mugG.position.set(0.82,0.86,0.18);deskG.add(mugG);
+// 便签
+const note=rbox(0.16,0.012,0.12,MAT.note,0.02);note.position.set(-0.72,0.827,0.22);note.rotation.y=-0.12;deskG.add(note);
+const note2=rbox(0.13,0.012,0.1,MAT.note2,0.02);note2.position.set(-0.57,0.829,0.34);note2.rotation.y=0.08;deskG.add(note2);
+// 文件堆（圆润）
+for(let i=0;i<4;i++){
+  const paper=rbox(0.24,0.02,0.34,i%2?TM('#ffffff'):TM('#f0ede6'),0.04);paper.position.set(-0.88,0.81+i*0.022,-0.2);paper.rotation.y=(Math.random()-0.5)*0.1;deskG.add(paper);
+}
+// 笔筒（海岸陶罐风）
+const ph=cyl(0.05,0.045,0.12,MAT.pot,20);ph.position.set(0.95,0.86,-0.1);deskG.add(ph);
+['#e85858','#ffc840','#4ab868'].forEach((cc,i)=>{const pen=cyl(0.01,0.01,0.14,TM(cc),10);pen.position.set(0.95+Math.cos(i*2.1)*0.02,0.91,-0.1+Math.sin(i*2.1)*0.02);pen.rotation.z=0.06;deskG.add(pen);});
+// 桌面贝壳摆件（海岸元素！）
+const shellG=new THREE.Group();
+const shellBase=cyl(0.06,0.07,0.02,MAT.shellCream,16);shellG.add(shellBase);
+// 扇贝壳（半圆切片叠加）
+for(let i=0;i<5;i++){
+  const rib=new THREE.Mesh(new THREE.SphereGeometry(0.07,12,8,0,Math.PI*2,0,Math.PI*0.5),MAT.shellPink);
+  rib.scale.set(0.25+ i*0.04,1,1);rib.position.set(0,0.02,0);rib.rotation.x=-Math.PI/2;shellG.add(rib);
+}
+shellG.position.set(-0.3,0.83,0.5);shellG.scale.set(1,0.6,1);deskG.add(shellG);
+// 桌面小海玻璃瓶
+const seaGlassJar=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.05,0.1,16),MAT.jarGlass);
+seaGlassJar.position.set(0.5,0.85,0.45);deskG.add(seaGlassJar);
+['#7ad890','#e8786a','#a898c8'].forEach((cc,i)=>{const shard=sphere(0.018,TM(cc),8);shard.position.set((i-1)*0.02,0.83,0.45);deskG.add(shard);});
+// 台灯（鹅颈一体流线：底盘+鹅颈管合并为单件黄铜，灯罩嵌套在管端）
+const lampG=new THREE.Group();
+const neckCurve=new THREE.CatmullRomCurve3([
+  new THREE.Vector3(0,0.85,0),
+  new THREE.Vector3(0,1.15,0),
+  new THREE.Vector3(0,1.34,0.10),
+  new THREE.Vector3(0,1.38,0.26),
+  new THREE.Vector3(0,1.32,0.40),
+]);
+const lampBody=merged([
+  bake(new THREE.CylinderGeometry(0.12,0.14,0.05,20),0,0.835,0),   // 底盘
+  new THREE.TubeGeometry(neckCurve,28,0.02,12,false),              // 鹅颈管（一根连续流线）
+],MAT.brass);
+lampG.add(lampBody);
+const lshade=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.16,0.15,20,1,true),
+  new THREE.MeshToonMaterial({color:'#e8b060',gradientMap,emissive:'#ffb858',emissiveIntensity:0.6,side:THREE.DoubleSide}));
+lshade.position.set(0,1.30,0.44);lampG.add(lshade);
+lampG.position.set(-1.35,0,0.2);deskG.add(lampG);
+
+deskG.position.set(0,0,-0.6);scene.add(deskG);
+
+// --- 2. 宝藏箱式保险柜（海岸+财务=宝藏箱） ---
+const chestG=new THREE.Group();
+const chestBody=rbox(0.7,0.42,0.5,MAT.coastWood,0.08);chestBody.position.y=0.24;chestG.add(chestBody);
+// 弧形箱盖（半圆柱）
+const lid=new THREE.Mesh(new THREE.CylinderGeometry(0.25,0.25,0.5,20,1,false,0,Math.PI),MAT.coastWoodDark);
+lid.scale.set(1,1,1);lid.position.set(0,0.5,0);lid.rotation.z=Math.PI/2;chestG.add(lid);
+// 黄铜横箍（两道）
+[0.15,0.42].forEach(y=>{const band=box(0.72,0.05,0.52,MAT.brass);band.position.set(0,y,0);chestG.add(band);});
+// 黄铜锁扣
+const lockBase=box(0.12,0.14,0.04,MAT.brass);lockBase.position.set(0,0.36,0.26);chestG.add(lockBase);
+const lockRing=torus(0.04,0.012,MAT.brass,16);lockRing.position.set(0,0.36,0.29);lockRing.rotation.x=Math.PI/2;chestG.add(lockRing);
+// 箱角黄铜包角
+[[0.31,0.21],[0.31,-0.21],[-0.31,0.21],[-0.31,-0.21]].forEach(([lx,lz])=>{
+  const corner=box(0.08,0.08,0.08,MAT.brass);corner.position.set(lx,0.42,lz);chestG.add(corner);
+  const cornerB=box(0.08,0.08,0.08,MAT.brass);cornerB.position.set(lx,0.06,lz);chestG.add(cornerB);
+});
+chestG.position.set(-hw+0.65,0,hd-0.85);chestG.rotation.y=Math.PI/4;scene.add(chestG);
+
+// --- 3. 贝壳玻璃罐置物架（替代铁皮文件柜） ---
+const shelfG=new THREE.Group();
+// 木质框架（开放式，3 层）
+const sW=0.7,sH=1.3,sD=0.4;
+const sL=box(0.06,sH,0.06,MAT.coastWoodDark);sL.position.set(-sW/2,sH/2,0);shelfG.add(sL);
+const sR=box(0.06,sH,0.06,MAT.coastWoodDark);sR.position.set(sW/2,sH/2,0);shelfG.add(sR);
+[0.06,0.5,0.95,1.3].forEach(y=>{const sh=box(sW,0.05,sD,MAT.coastWood);sh.position.set(0,y/2+0.025,0);shelfG.add(sh);});
+// 背板
+const sBack=box(sW,sH,0.03,MAT.coastWood);sBack.position.set(0,sH/2,-sD/2+0.02);shelfG.add(sBack);
+// 玻璃罐装贝壳（每层放 2-3 个）
+function shellJar(x,y,z,jarColor,shellColors){
+  const jg=new THREE.Group();
+  const jar=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.06,0.14,16),MAT.jarGlass);jar.position.y=0.07;jg.add(jar);
+  const lid2=cyl(0.075,0.075,0.025,TM(jarColor),16);lid2.position.y=0.15;jg.add(lid2);
+  shellColors.forEach((sc,i)=>{const sh=sphere(0.022,TM(sc),8);sh.position.set((i-1)*0.025,0.04,(i%2)*0.02);sh.scale.set(1,0.5,1);jg.add(sh);});
+  jg.position.set(x,y,z);return jg;
+}
+// 第一层（低）
+shelfG.add(shellJar(-0.18,0.18,0,'#e8786a',['#fff0d8','#f0a8b0','#fff0d8']));
+shelfG.add(shellJar(0.05,0.18,0,'#7ab8d8',['#fff0d8','#ffe080','#f0a8b0']));
+shelfG.add(shellJar(0.24,0.18,0,'#ffc840',['#fff0d8','#7ad890']));
+// 第二层
+shelfG.add(shellJar(-0.15,0.62,0,'#a898c8',['#fff0d8','#f0a8b0']));
+shelfG.add(shellJar(0.18,0.62,0,'#5cc888',['#ffe080','#fff0d8']));
+// 第三层：小木箱 + 明信片
+const crate=rbox(0.22,0.16,0.2,MAT.coastWoodDark,0.02);crate.position.set(-0.15,1.08,0);shelfG.add(crate);
+const crate2=rbox(0.18,0.14,0.18,MAT.coastWood,0.02);crate2.position.set(0.15,1.07,0);shelfG.add(crate2);
+// 明信片斜靠
+const pc=rbox(0.16,0.11,0.01,TM('#fff8e8'),0.01);pc.position.set(0,1.12,0.12);pc.rotation.z=0.1;shelfG.add(pc);
+// 灯塔摆件（货架顶部）
+const lhouseG=new THREE.Group();
+const lhBase=cyl(0.08,0.09,0.06,MAT.lighthouseW,16);lhouseG.add(lhBase);
+const lhBody=cyl(0.07,0.08,0.22,MAT.lighthouseW,16);lhBody.position.y=0.14;lhouseG.add(lhBody);
+// 红白条纹（3 道红环）
+[0.1,0.18,0.26].forEach(y=>{const ring=cyl(0.081,0.082,0.04,MAT.lighthouseR,16);ring.position.y=y;lhouseG.add(ring);});
+const lhTop=cyl(0.06,0.075,0.06,MAT.lighthouseR,16);lhTop.position.y=0.29;lhouseG.add(lhTop);
+const lhLight=sphere(0.05,new THREE.MeshBasicMaterial({color:'#ffe080'}));lhLight.position.y=0.35;lhouseG.add(lhLight);
+const lhRoof=new THREE.Mesh(new THREE.ConeGeometry(0.08,0.08,16),MAT.lighthouseR);lhRoof.position.y=0.43;lhouseG.add(lhRoof);
+lhouseG.position.set(0,1.32,0);shelfG.add(lhouseG);
+
+shelfG.position.set(hw-0.55,0,hd-0.65);shelfG.rotation.y=-Math.PI/4;scene.add(shelfG);
+
+// --- 4. 珊瑚色办公椅（椅身一体成型：座垫+靠背+头枕+扶手 合并为单件） ---
+const chairG=new THREE.Group();
+// 金属支架（独立组件，合理）
+const cBase=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.34,0.06,5),MAT.metalDark);cBase.position.y=0.03;chairG.add(cBase);
+for(let i=0;i<5;i++){const a=i/5*Math.PI*2;const wheel=sphere(0.05,MAT.metalDark,10);wheel.position.set(Math.cos(a)*0.3,0.04,Math.sin(a)*0.3);wheel.scale.set(1,0.6,1);chairG.add(wheel);}
+const cPole=cyl(0.028,0.034,0.4,MAT.metalDark,10);cPole.position.y=0.25;chairG.add(cPole);
+// 椅身：座垫+靠背弧+头枕+扶手+扶手支柱 合并为一件珊瑚色一体件（部件互相穿插，无接缝）
+const chairBody=merged([
+  bake(new RoundedBoxGeometry(0.52,0.14,0.52,5,0.07),0,0.5,0),                              // 座垫（厚圆角）
+  bake(new THREE.CylinderGeometry(0.24,0.27,0.07,22),0,0.57,0,0,0,0,1,1,1.1),               // 座面软垫（嵌入座垫）
+  bake(new THREE.CylinderGeometry(0.35,0.35,0.12,22,1,false,0,Math.PI*0.62),0,0.78,-0.16,Math.PI/2,0,0), // 靠背弧（下沿插入座垫）
+  bake(new THREE.SphereGeometry(0.23,18,18),0,1.14,-0.2,0,0,0,1,0.58,0.5),                 // 头枕（压扁，叠在靠背顶）
+  bake(new THREE.CylinderGeometry(0.05,0.05,0.36,12),-0.27,0.62,0.08,Math.PI/2,0,0),       // 左扶手（横杆）
+  bake(new THREE.CylinderGeometry(0.05,0.05,0.36,12),0.27,0.62,0.08,Math.PI/2,0,0),        // 右扶手
+  bake(new THREE.CylinderGeometry(0.045,0.045,0.26,12),-0.27,0.47,0.22),                   // 左扶手支柱（连座垫）
+  bake(new THREE.CylinderGeometry(0.045,0.045,0.26,12),0.27,0.47,0.22),                    // 右扶手支柱
+],MAT.chairCoral);
+chairG.add(chairBody);
+chairG.position.set(0,0,0.6);chairG.rotation.y=Math.PI;scene.add(chairG);
+
+// --- 5. 沙滩明信片墙（风格图的相框网格） ---
+const postG=new THREE.Group();
+for(let r=0;r<2;r++)for(let c2=0;c2<2;c2++){
+  const fr=rbox(0.28,0.2,0.03,MAT.glassFrame,0.02);fr.position.set(c2*0.32-0.16,r*0.24+0.12,0);postG.add(fr);
+  const pic=new THREE.Mesh(new THREE.PlaneGeometry(0.24,0.16),new THREE.MeshBasicMaterial({map:sceneryTex()}));
+  pic.position.set(c2*0.32-0.16,r*0.24+0.12,0.02);postG.add(pic);
+}
+postG.position.set(-hw+0.14,1.55,0.5);postG.rotation.y=Math.PI/2;scene.add(postG);
+
+// --- 6. 挂钟 ---
+const clockG=new THREE.Group();
+const clockFace=cyl(0.24,0.24,0.05,TM('#fff8e8'),32);clockFace.rotation.x=Math.PI/2;clockG.add(clockFace);
+clockG.add(torus(0.24,0.03,MAT.glassFrame,28));
+const cHand1=box(0.02,0.13,0.01,TM('#3a3848'));cHand1.position.set(0,0.05,0.03);clockG.add(cHand1);
+const cHand2=box(0.016,0.18,0.01,TM('#3a3848'));cHand2.position.set(0.04,0,0.03);cHand2.rotation.z=-1.2;clockG.add(cHand2);
+[12,3,6,9].forEach(h=>{const a=h/12*Math.PI*2-Math.PI/2;const mk=box(0.025,0.05,0.01,TM('#3a3848'));mk.position.set(Math.cos(a)*0.19,Math.sin(a)*0.19,0.03);mk.rotation.z=a+Math.PI/2;clockG.add(mk);});
+clockG.position.set(hw-0.14,1.8,-1.2);clockG.rotation.y=-Math.PI/2;scene.add(clockG);
+
+// --- 7. 落地大盆栽 + 悬挂绿植 ---
+function bigPlant(x,z,s=1){
+  const g=new THREE.Group();
+  const pot=cyl(0.24*s,0.2*s,0.42*s,MAT.potBlue,20);pot.position.y=0.21*s;g.add(pot);
+  const potRim=cyl(0.24*s,0.24*s,0.06*s,MAT.potBlue,20);potRim.position.y=0.4*s;g.add(potRim);
+  for(let i=0;i<7;i++){const a=i/7*Math.PI*2;const leaf=sphere(0.14*s,i%2?MAT.leaf:MAT.leafDark,14);leaf.position.set(Math.cos(a)*0.16*s,0.6*s+Math.random()*0.12*s,Math.sin(a)*0.16*s);leaf.scale.set(1,1.1,1);g.add(leaf);}
+  const top=sphere(0.18*s,MAT.leaf,16);top.scale.set(1,1.2,1);top.position.y=0.7*s;g.add(top);
+  for(let i=0;i<4;i++){const a=i/4*Math.PI*2;const blade=sphere(0.05*s,MAT.leafDark,8);blade.scale.set(0.5,3,0.5);blade.position.set(Math.cos(a)*0.1*s,0.85*s,Math.sin(a)*0.1*s);blade.rotation.set(0.2,a,Math.cos(a)*0.3);g.add(blade);}
+  g.position.set(x,0,z);return g;
+}
+scene.add(bigPlant(-hw+0.6,hd-0.6,1.1));
+scene.add(bigPlant(hw-0.6,-hd+0.6,0.9));
+// 悬挂绿植（绳吊，风格图的悬挂植物）
+const hangG=new THREE.Group();
+const hCord=cyl(0.012,0.012,0.6,MAT.rope,8);hCord.position.set(1.6,ROOM.h-0.42,0.4);hangG.add(hCord);
+const hPot=cyl(0.12,0.1,0.16,MAT.potBlue,16);hPot.position.set(1.6,ROOM.h-0.78,0.4);hangG.add(hPot);
+const hRim=cyl(0.12,0.12,0.04,MAT.potBlue,16);hRim.position.set(1.6,ROOM.h-0.72,0.4);hangG.add(hRim);
+// 垂下的藤蔓
+for(let i=0;i<5;i++){const a=i/5*Math.PI*2;const vine=cyl(0.008,0.008,0.3+Math.random()*0.15,MAT.leaf,6);vine.position.set(1.6+Math.cos(a)*0.08,ROOM.h-0.95,0.4+Math.sin(a)*0.08);vine.rotation.x=(Math.random()-0.5)*0.3;vine.rotation.z=(Math.random()-0.5)*0.3;hangG.add(vine);
+  const vineEnd=sphere(0.03,MAT.leaf,8);vineEnd.position.set(1.6+Math.cos(a)*0.12,ROOM.h-1.1,0.4+Math.sin(a)*0.12);hangG.add(vineEnd);}
+// 悬挂盆栽顶部叶丛
+for(let i=0;i<5;i++){const a=i/5*Math.PI*2;const hl=sphere(0.07,MAT.leaf,10);hl.position.set(1.6+Math.cos(a)*0.06,ROOM.h-0.66,0.4+Math.sin(a)*0.06);hangG.add(hl);}
+scene.add(hangG);
+
+// 桌面小多肉
+const succ=new THREE.Group();
+const succPot=cyl(0.07,0.06,0.09,MAT.potBlue,16);succPot.position.y=0.045;succ.add(succPot);
+for(let i=0;i<5;i++){const a=i/5*Math.PI*2;const leaf=sphere(0.025,MAT.leaf,8);leaf.scale.set(1,1.6,1);leaf.position.set(Math.cos(a)*0.035,0.12,Math.sin(a)*0.035);leaf.rotation.z=Math.cos(a)*0.4;succ.add(leaf);}
+const succTop=sphere(0.03,MAT.leaf,8);succTop.position.y=0.14;succ.add(succTop);
+succ.position.set(0.95,0.825,0.42);deskG.add(succ);
+
+// 窗台小摆件（贝壳 + 海星）
+const sillShell=new THREE.Mesh(new THREE.ConeGeometry(0.06,0.04,16),MAT.shellPink);
+sillShell.position.set(1.2,winY+0.05,-hd+0.25);sillShell.rotation.x=Math.PI;scene.add(sillShell);
+const sillBall=sphere(0.06,TM('#7ab8d8'),14);sillBall.position.set(-1.0,winY+0.06,-hd+0.25);scene.add(sillBall);
+// 海星
+const starG=new THREE.Group();
+for(let i=0;i<5;i++){const a=i/5*Math.PI*2-Math.PI/2;const arm=new THREE.Mesh(new THREE.ConeGeometry(0.025,0.1,8),TM('#e89858'));arm.position.set(Math.cos(a)*0.03,0,Math.sin(a)*0.03);arm.rotation.set(Math.PI/2,0,a);starG.add(arm);}
+const starCore=sphere(0.035,TM('#e89858'),10);starG.add(starCore);
+starG.position.set(-1.3,winY+0.04,-hd+0.25);starG.rotation.x=Math.PI/2;scene.add(starG);
+
+// 门牌
+const plaqueG=new THREE.Group();
+plaqueG.add(box(0.52,0.2,0.04,TM('#3a3848')));
+plaqueG.add(box(0.58,0.26,0.02,TM('#5a5868')));
+const tc=document.createElement('canvas');tc.width=256;tc.height=96;const tx=tc.getContext('2d');
+tx.fillStyle='#ffe080';tx.font='bold 42px -apple-system,"PingFang SC"';tx.textAlign='center';tx.textBaseline='middle';tx.fillText('CFO 财务中心',128,52);
+const pText=new THREE.Mesh(new THREE.PlaneGeometry(0.48,0.18),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(tc)}));pText.position.z=0.025;plaqueG.add(pText);
+plaqueG.position.set(-hw+1.7,2.1,hd-0.12);scene.add(plaqueG);
+
+/* 动画 */
+let t=0;
+function animate(){
+  requestAnimationFrame(animate);
+  t+=0.016;
+  pendantLight.intensity=1.7+Math.sin(t*1.5)*0.18;
+  deskLampLight.intensity=0.75+Math.sin(t*2+1)*0.1;
+  controls.update();
+  renderer.render(scene,camera);
+}
+animate();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+</script>
+</body>
+</html>

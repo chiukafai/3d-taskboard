@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>办公室立体物品设计方案 · 3D 交互展示</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ========== 导航栏 ========== -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="#hero" class="nav-logo">
+            <span class="logo-icon">3D</span>
+            <span class="logo-text">办公室物品方案</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#showcase" class="nav-link">3D 展示</a></li>
+            <li><a href="#list" class="nav-link">物品清单</a></li>
+            <li><a href="#template" class="nav-link">方案模板</a></li>
+            <li><a href="#layout" class="nav-link">平面布局</a></li>
+        </ul>
+        <button class="nav-toggle" id="navToggle" aria-label="菜单">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- ========== Hero 区域 ========== -->
+<header class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+        <div class="hero-badge">3D 可交互 · 完整清单 · 方案模板</div>
+        <h1 class="hero-title">办公室立体物品设计方案</h1>
+        <p class="hero-subtitle">12 类办公家具，每类 3 种型号共 36 个 3D 立体模型，拖拽旋转查看，切换标签对比不同款式</p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-num">36</span>
+                <span class="stat-label">3D 模型</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">6</span>
+                <span class="stat-label">功能区域</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">360°</span>
+                <span class="stat-label">可旋转查看</span>
+            </div>
+        </div>
+        <div class="hero-actions">
+            <a href="#showcase" class="btn btn-primary">查看 3D 展示</a>
+            <a href="#template" class="btn btn-outline">方案模板</a>
+        </div>
+    </div>
+</header>
+
+<!-- ========== 3D 物品展示区 ========== -->
+<section class="showcase" id="showcase">
+    <div class="section-header">
+        <span class="section-tag">3D INTERACTIVE</span>
+        <h2 class="section-title">办公室物品 3D 立体展示</h2>
+        <p class="section-desc">每件物品提供 3 种型号，点击标签切换查看，鼠标拖拽可 360° 旋转</p>
+    </div>
+    <div class="item-grid" id="itemGrid">
+        <!-- 卡片由 app.js 动态生成 -->
+    </div>
+</section>
+
+<!-- ========== 物品清单表 ========== -->
+<section class="item-list-section" id="list">
+    <div class="section-header">
+        <span class="section-tag">CHECKLIST</span>
+        <h2 class="section-title">完整物品配置清单</h2>
+        <p class="section-desc">12 类物品 × 3 种型号 = 36 项完整配置，含推荐数量、规格尺寸、材质及用途说明</p>
+    </div>
+    <div class="table-wrapper">
+        <table class="item-table">
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>物品名称</th>
+                    <th>型号</th>
+                    <th>所属区域</th>
+                    <th>推荐数量</th>
+                    <th>规格（长×宽×高 cm）</th>
+                    <th>主要材质</th>
+                    <th>用途说明</th>
+                </tr>
+            </thead>
+            <tbody id="itemTableBody">
+                <!-- 由 app.js 动态生成 -->
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ========== 方案模板 ========== -->
+<section class="solution-template" id="template">
+    <div class="section-header">
+        <span class="section-tag">TEMPLATE</span>
+        <h2 class="section-title">办公室配置方案模板</h2>
+        <p class="section-desc">可直接套用的方案框架，填入实际数据即可生成完整配置文档</p>
+    </div>
+
+    <!-- 项目概况 -->
+    <div class="template-card">
+        <div class="template-card-header">
+            <span class="template-icon">01</span>
+            <h3>项目概况</h3>
+        </div>
+        <div class="template-grid">
+            <div class="field-group">
+                <label>项目名称</label>
+                <div class="field-fill"><span class="fill-line"></span></div>
+            </div>
+            <div class="field-group">
+                <label>办公面积</label>
+                <div class="field-fill"><span class="fill-line"></span></div>
+            </div>
+            <div class="field-group">
+                <label>编制人</label>
+                <div class="field-fill"><span class="fill-line"></span></div>
+            </div>
+            <div class="field-group">
+                <label>编制日期</label>
+                <div class="field-fill"><span class="fill-line"></span></div>
+            </div>
+            <div class="field-group">
+                <label>办公人数</label>
+                <div class="field-fill"><span class="fill-line"></span></div>
+            </div>
+            <div class="field-group">
+                <label>预算总额（万元）</label>
+                <div class="field-fill"><span class="fill-line"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 区域规划 -->
+    <div class="template-card">
+        <div class="template-card-header">
+            <span class="template-icon">02</span>
+            <h3>功能区域规划</h3>
+        </div>
+        <div class="zone-grid">
+            <div class="zone-card">
+                <div class="zone-icon" style="background: #B3D9F2; color: #2E6FB0;">前台</div>
+                <div class="zone-info">
+                    <h4>前台接待区</h4>
+                    <p>接待台、等候沙发、绿植装饰</p>
+                    <span class="zone-area">建议面积：8-15㎡</span>
+                </div>
+            </div>
+            <div class="zone-card">
+                <div class="zone-icon" style="background: #B3E6CC; color: #2E8B57;">工位</div>
+                <div class="zone-info">
+                    <h4>开放工位区</h4>
+                    <p>办公桌、办公椅、显示器、文件柜</p>
+                    <span class="zone-area">建议面积：人均 4-6㎡</span>
+                </div>
+            </div>
+            <div class="zone-card">
+                <div class="zone-icon" style="background: #FFE5A3; color: #B8860B;">会议</div>
+                <div class="zone-info">
+                    <h4>会议室</h4>
+                    <p>会议桌、会议椅、白板、显示器</p>
+                    <span class="zone-area">建议面积：15-30㎡</span>
+                </div>
+            </div>
+            <div class="zone-card">
+                <div class="zone-icon" style="background: #FFC2C2; color: #C44848;">休息</div>
+                <div class="zone-info">
+                    <h4>休息/茶歇区</h4>
+                    <p>沙发、茶几、饮水机、绿植</p>
+                    <span class="zone-area">建议面积：10-20㎡</span>
+                </div>
+            </div>
+            <div class="zone-card">
+                <div class="zone-icon" style="background: #C4B3E6; color: #6B4C8A;">储物</div>
+                <div class="zone-info">
+                    <h4>储物/打印区</h4>
+                    <p>文件柜、书柜、打印机、书架</p>
+                    <span class="zone-area">建议面积：5-10㎡</span>
+                </div>
+            </div>
+            <div class="zone-card">
+                <div class="zone-icon" style="background: #D4CCC0; color: #6B5D50;">茶水</div>
+                <div class="zone-info">
+                    <h4>茶水间</h4>
+                    <p>饮水机、储物柜、操作台面</p>
+                    <span class="zone-area">建议面积：5-8㎡</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 物品配置表 -->
+    <div class="template-card">
+        <div class="template-card-header">
+            <span class="template-icon">03</span>
+            <h3>物品配置明细</h3>
+        </div>
+        <div class="table-wrapper">
+            <table class="template-table">
+                <thead>
+                    <tr>
+                        <th>区域</th>
+                        <th>物品</th>
+                        <th>数量</th>
+                        <th>单价（元）</th>
+                        <th>小计（元）</th>
+                        <th>供应商</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody id="templateTableBody">
+                    <!-- 由 app.js 动态生成 -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="total-label">合计</td>
+                        <td class="total-value"><span class="fill-line"></span></td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- 实施时间表 -->
+    <div class="template-card">
+        <div class="template-card-header">
+            <span class="template-icon">04</span>
+            <h3>实施时间表</h3>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h4>第 1 周 · 需求确认</h4>
+                    <p>确定人员编制、区域划分、物品清单、预算审批</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h4>第 2 周 · 供应商比选</h4>
+                    <p>询价不少于 3 家供应商，确认交货周期与质保条款</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h4>第 3-4 周 · 采购下单</h4>
+                    <p>签订采购合同，支付预付款，跟踪生产进度</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h4>第 5 周 · 到货安装</h4>
+                    <p>分批到货验收，安装调试，质量检查</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h4>第 6 周 · 验收归档</h4>
+                    <p>整体验收，资产编号登记，质保资料归档</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自检清单 -->
+    <div class="template-card checklist-card">
+        <div class="template-card-header">
+            <span class="template-icon">05</span>
+            <h3>配置自检清单</h3>
+        </div>
+        <div class="checklist-grid">
+            <label class="check-item">
+                <span class="check-box"></span>
+                <span>人均办公面积 ≥ 4㎡</span>
+            </label>
+            <label class="check-item">
+                <span class="check-box"></span>
+                <span>消防通道畅通无遮挡</span>
+            </label>
+            <label class="check-item">
+                <span class="check-box"></span>
+                <span>文件柜/书柜靠墙固定</span>
+            </label>
+            <label class="check-item">
+                <span class="check-box"></span>
+                <span>会议室可容纳全体会议人数</span>
+            </label>
+            <label class="check-item">
+                <span class="check-box"></span>
+                <span>每层至少 1 台饮水机 + 1 台打印机</span>
+            </label>
+            <label class="check-item">
+                <span class="check-box"></span>
+                <span>绿植覆盖率 ≥ 办公区面积 3%</span>
+            </label>
+            <label class="check-item">
+                <span class="check-box"></span>
+                <span>椅子符合人体工学标准</span>
+            </label>
+            <label class="check-item">
+                <span class="check-box"></span>
+                <span>预算偏差 ≤ 10%</span>
+            </label>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 平面布局示意 ========== -->
+<section class="layout-section" id="layout">
+    <div class="section-header">
+        <span class="section-tag">LAYOUT</span>
+        <h2 class="section-title">办公室平面布局示意</h2>
+        <p class="section-desc">标准办公区平面分区示意，实际布局需根据场地条件调整</p>
+    </div>
+    <div class="floor-plan">
+        <div class="floor-room room-reception">
+            <span>前台接待区</span>
+        </div>
+        <div class="floor-room room-workspace">
+            <span>开放工位区</span>
+        </div>
+        <div class="floor-room room-meeting">
+            <span>会议室</span>
+        </div>
+        <div class="floor-room room-rest">
+            <span>休息/茶歇区</span>
+        </div>
+        <div class="floor-room room-storage">
+            <span>储物/打印区</span>
+        </div>
+        <div class="floor-room room-pantry">
+            <span>茶水间</span>
+        </div>
+    </div>
+    <div class="layout-legend">
+        <span>区域颜色对应方案模板中的功能区域分类，实际部署时需根据场地面积和形状灵活调整</span>
+    </div>
+</section>
+
+<!-- ========== Footer ========== -->
+<footer class="footer">
+    <p>办公室立体物品设计方案 · 3D 交互原型</p>
+    <p class="footer-sub">本页面为方案展示原型，物品规格与数量需根据实际情况调整</p>
+</footer>
+
+<!-- Three.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- 应用逻辑 -->
+<script src="app.js"></script>
+
+</body>
+</html>

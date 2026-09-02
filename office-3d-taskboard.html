@@ -403,16 +403,46 @@
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
+// ===== 卡通着色：4 级色阶渐变贴图（cel-shading） =====
+const _steps=new Uint8Array([0x55,0x99,0xcc,0xff]);
+const _gradientMap=new THREE.DataTexture(_steps,_steps.length,1,THREE.RedFormat);
+_gradientMap.minFilter=THREE.NearestFilter;_gradientMap.magFilter=THREE.NearestFilter;
+_gradientMap.generateMipmaps=false;_gradientMap.needsUpdate=true;
+// 烘焙变换到几何体（用于合并前）
+function bake(geo,x,y,z,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1){
+  const c=geo.clone();
+  c.applyMatrix4(new THREE.Matrix4().compose(
+    new THREE.Vector3(x,y,z),
+    new THREE.Quaternion().setFromEuler(new THREE.Euler(rx,ry,rz)),
+    new THREE.Vector3(sx,sy,sz)));
+  return c;
+}
+// 合并多个几何体为一件完整物件（消除接缝，一体成型）
+function merged(parts,mat){
+  const idx=parts.filter(g=>g.index!==null).length;
+  let geos=parts;
+  if(idx>0&&idx<parts.length) geos=parts.map(g=>g.index!==null?g.toNonIndexed():g);
+  const g=mergeGeometries(geos);
+  const m=new THREE.Mesh(g,typeof mat==='string'?mcolor(mat):mat);m.castShadow=true;m.receiveShadow=true;return m;
+}
+
+// 平面图布局：北排服务区 + 中央横厅 + 南角私密房 + 露台
+// 建筑尺寸: 24m(宽) × 18m(深)
 const ZONES = {
-  cmo:  { id:'cmo',  name:'CMO 营销中心',   color:'#b89850', cx:2.75, cz:9.875, w:4.5, d:19.75, doorWall:null,   doorPos:null, carpetColor:'#907038', openPlan:true },
-  cfo:  { id:'cfo',  name:'CFO 财务中心',   color:'#5a8070', cx:9.3,  cz:3,    w:7.8, d:7,   doorWall:'front', doorPos:9.3,  carpetColor:'#406050' },
-  coo:  { id:'coo',  name:'COO 运营中心',   color:'#647080', cx:16.2, cz:3,    w:6,   d:7,   doorWall:'front', doorPos:16.2, carpetColor:'#4a5460' },
-  cpo:  { id:'cpo',  name:'CPO 产品设计室', color:'#b08060', cx:22.2, cz:3,    w:6,   d:7,   doorWall:'front', doorPos:22.2, carpetColor:'#885840' },
-  cro:  { id:'cro',  name:'CRO 风控中心',   color:'#8a5858', cx:27.1, cz:3,    w:3.8, d:7,   doorWall:'front', doorPos:27.1, carpetColor:'#604040' },
-  meeting:{id:'meeting',name:'战略会议室',   color:'#706898', cx:9.3,  cz:16.5, w:7.8, d:6.5, doorWall:'back',  doorPos:9.3,  carpetColor:'#504870' },
-  ceo:  { id:'ceo',  name:'CEO 战略办公室', color:'#5a6880', cx:17.1, cz:16.5, w:7.8, d:6.5, doorWall:'back',  doorPos:17.1, carpetColor:'#445060' },
-  cto:  { id:'cto',  name:'CTO 技术中心',   color:'#485c48', cx:25,   cz:16.5, w:8,   d:6.5, doorWall:'back',  doorPos:25,   carpetColor:'#304030' }
+  // 北排 (z=0~5): 服务区+主卧(对应平面图: 电梯/储物/厨房/餐厅/主卧)
+  cro:  { id:'cro',  name:'CRO 风控中心',   color:'#8a5858', cx:2.5,  cz:2.5,  w:5,  d:5, doorWall:'front', doorPos:2.5,  carpetColor:'#604040' },
+  coo:  { id:'coo',  name:'COO 运营中心',   color:'#647080', cx:8.5,  cz:2.5,  w:7,  d:5, doorWall:'front', doorPos:8.5,  carpetColor:'#4a5460' },
+  meeting:{id:'meeting',name:'战略会议室',   color:'#706898', cx:15,   cz:2.5,  w:6,  d:5, doorWall:'front', doorPos:15,   carpetColor:'#504870' },
+  ceo:  { id:'ceo',  name:'CEO 战略办公室', color:'#5a6880', cx:21,   cz:2.5,  w:6,  d:5, doorWall:'front', doorPos:21,   carpetColor:'#445060' },
+  // 中央 (z=5~13): 横厅(对应平面图: 客厅+书房)
+  cmo:  { id:'cmo',  name:'CMO 营销中心',   color:'#b89850', cx:9,    cz:9,    w:18, d:8, doorWall:null,   doorPos:null,  carpetColor:'#907038', openPlan:true },
+  cpo:  { id:'cpo',  name:'CPO 产品设计室', color:'#b08060', cx:21,   cz:9,    w:6,  d:8, doorWall:'left',  doorPos:9,    carpetColor:'#885840' },
+  // 南排 (z=13~18): 角落私密房(对应平面图: 西南卧室+东南卧室)
+  cto:  { id:'cto',  name:'CTO 技术中心',   color:'#485c48', cx:4,    cz:15.5, w:8,  d:5, doorWall:'back',  doorPos:4,    carpetColor:'#304030' },
+  cfo:  { id:'cfo',  name:'CFO 财务中心',   color:'#5a8070', cx:20,   cz:15.5, w:8,  d:5, doorWall:'back',  doorPos:20,   carpetColor:'#406050' }
 };
 
 const FALLBACK_TASKS = {
@@ -443,9 +473,11 @@ let activeZone=null, activeFilter='all', draggedTaskId=null, activeCollabTask=nu
 const connectionLines=[], doorGroups={}, allRoomFloorMeshes=[];
 let animTime=0;
 
-function mcolor(hex, opts={}){return new THREE.MeshStandardMaterial({color:hex, roughness:opts.roughness??0.7, metalness:opts.metalness??0.05, ...opts});}
-function box(w,h,d,mat){const g=new THREE.BoxGeometry(w,h,d);const mesh=new THREE.Mesh(g,typeof mat==='string'?mcolor(mat):mat);mesh.castShadow=true;mesh.receiveShadow=true;return mesh;}
-function cyl(rt,rb,h,mat){const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,32),typeof mat==='string'?mcolor(mat):mat);mesh.castShadow=true;mesh.receiveShadow=true;return mesh;}
+function mcolor(hex, opts={}){const {roughness:_,metalness:__,...rest}=opts;return new THREE.MeshToonMaterial({color:hex,gradientMap:_gradientMap,...rest});}
+function box(w,h,d,mat){const g=new THREE.Mesh(new RoundedBoxGeometry(w,h,d,5,Math.min(w,h,d)*0.12),typeof mat==='string'?mcolor(mat):mat);g.castShadow=true;g.receiveShadow=true;return g;}
+function cyl(rt,rb,h,mat,seg=28){const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),typeof mat==='string'?mcolor(mat):mat);mesh.castShadow=true;mesh.receiveShadow=true;return mesh;}
+function sphere(r,mat,seg=18){const g=new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),typeof mat==='string'?mcolor(mat):mat);g.castShadow=true;g.receiveShadow=true;return g;}
+function torus(r,t,mat,seg=20,arc=7){const g=new THREE.Mesh(new THREE.TorusGeometry(r,t,seg,seg,arc),typeof mat==='string'?mcolor(mat):mat);g.castShadow=true;g.receiveShadow=true;return g;}
 
 function woodTex(base,dark){
   const c=document.createElement('canvas');c.width=512;c.height=256;
@@ -453,36 +485,78 @@ function woodTex(base,dark){
   for(let i=0;i<80;i++){const y=Math.random()*256,a=0.03+Math.random()*0.08;ctx.strokeStyle=`rgba(${dark},${a})`;ctx.lineWidth=1+Math.random()*2.5;ctx.beginPath();ctx.moveTo(0,y);for(let x=0;x<512;x+=15)ctx.lineTo(x,y+Math.sin(x*0.015)*4+Math.sin(x*0.04)*2);ctx.stroke();}
   const tex=new THREE.CanvasTexture(c);tex.wrapS=tex.wrapT=THREE.RepeatWrapping;return tex;
 }
+// 海岸木板纹理（竖向板缝，海岸风标志纹理）
+function plankTex(base,dark,gapCol,vertical=true){
+  const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');
+  x.fillStyle=base;x.fillRect(0,0,512,512);
+  const n=7,pw=512/n;
+  for(let i=0;i<n;i++){
+    x.fillStyle=`rgba(${dark},${0.06+Math.random()*0.06})`;
+    if(vertical)x.fillRect(i*pw,0,pw,512);else x.fillRect(0,i*pw,512,pw);
+    x.strokeStyle=gapCol;x.lineWidth=2;
+    if(vertical){x.beginPath();x.moveTo(i*pw,0);x.lineTo(i*pw,512);x.stroke();}
+    else{x.beginPath();x.moveTo(0,i*pw);x.lineTo(512,i*pw);x.stroke();}
+  }
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;
+}
+// 海岸风地毯（波浪/贝壳花纹）
+function coastalRugTex(color){
+  const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');
+  x.fillStyle=color;x.fillRect(0,0,256,256);
+  x.strokeStyle='rgba(255,255,255,0.18)';x.lineWidth=3;
+  for(let r=20;r<120;r+=24){x.beginPath();x.arc(128,128,r,0,Math.PI*2);x.stroke();}
+  x.fillStyle='rgba(255,255,255,0.12)';
+  for(let i=0;i<8;i++){const a=i/8*Math.PI*2;x.beginPath();x.arc(128+Math.cos(a)*90,128+Math.sin(a)*90,8,0,Math.PI*2);x.fill();}
+  x.strokeStyle='rgba(255,255,255,0.15)';x.lineWidth=6;x.strokeRect(12,12,232,232);
+  return new THREE.CanvasTexture(c);
+}
 function carpetTex(color){
-  const c=document.createElement('canvas');c.width=256;c.height=256;const ctx=c.getContext('2d');ctx.fillStyle=color;ctx.fillRect(0,0,256,256);
-  const img=ctx.getImageData(0,0,256,256);for(let i=0;i<img.data.length;i+=4){const n=(Math.random()-0.5)*18;img.data[i]=Math.max(0,Math.min(255,img.data[i]+n));img.data[i+1]=Math.max(0,Math.min(255,img.data[i+1]+n));img.data[i+2]=Math.max(0,Math.min(255,img.data[i+2]+n));}ctx.putImageData(img,0,0);
-  const tex=new THREE.CanvasTexture(c);tex.wrapS=tex.wrapT=THREE.RepeatWrapping;return tex;
+  return coastalRugTex(color);
 }
 
 const MATS={
-  woodFloor: new THREE.MeshStandardMaterial({map:woodTex('#c0ac94','85,72,58'),roughness:0.5,metalness:0}),
-  woodRoom: new THREE.MeshStandardMaterial({map:woodTex('#b4a084','75,62,48'),roughness:0.45,metalness:0}),
-  woodAtrium: new THREE.MeshStandardMaterial({map:woodTex('#c8b8a4','90,78,62'),roughness:0.5,metalness:0}),
-  wallInner: mcolor('#a89888',{roughness:0.7}),
-  wallOuter: mcolor('#948474',{roughness:0.68}),
-  wallTrim: mcolor('#887868',{roughness:0.62}),
-  deskLight: mcolor('#c0ad90',{roughness:0.4}),
-  deskDark: mcolor('#806850',{roughness:0.38}),
-  metal: mcolor('#b0a898',{roughness:0.32,metalness:0.5}),
-  metalDark: mcolor('#5a5248',{roughness:0.28,metalness:0.7}),
-  chairLeather: mcolor('#383430',{roughness:0.32}),
-  plantPot: mcolor('#986848',{roughness:0.42}),
-  plantLeaf: mcolor('#5a8848',{roughness:0.6}),
+  woodFloor: new THREE.MeshToonMaterial({map:plankTex('#f0d090','180,130,60','#b8884c'),gradientMap:_gradientMap}),
+  woodRoom: new THREE.MeshToonMaterial({map:plankTex('#e0b878','140,85,35','#a86838'),gradientMap:_gradientMap}),
+  woodAtrium: new THREE.MeshToonMaterial({map:plankTex('#ecc890','160,100,45','#b07848'),gradientMap:_gradientMap}),
+  wallInner: mcolor('#faf2e2'),
+  wallOuter: mcolor('#e8dcc4'),
+  wallBlue: mcolor('#c8def0'),
+  wallTrim: mcolor('#d09858'),
+  beam: mcolor('#d8a060'),
+  // 海岸木家具（竖向板缝蜜色木）
+  coastDesk: new THREE.MeshToonMaterial({map:plankTex('#e8b870','150,95,40','#a86838',true),gradientMap:_gradientMap}),
+  coastWood: mcolor('#d8a060'),
+  coastWoodDark: mcolor('#b07840'),
+  deskLight: mcolor('#eccc88'),
+  deskDark: mcolor('#b07840'),
+  metal: mcolor('#c8c0b0'),
+  metalDark: mcolor('#6a6258'),
+  chairCoral: mcolor('#e8786a'),
+  chairLeather: mcolor('#c4584a'),
+  plantPot: mcolor('#d09868'),
+  plantPotBlue: mcolor('#7ab8d8'),
+  plantLeaf: mcolor('#5cc888'),
+  plantLeafDark: mcolor('#3eb068'),
+  rope: mcolor('#e0c890'),
+  brass: mcolor('#e8c060'),
+  glass: new THREE.MeshPhysicalMaterial({color:'#dff0ff',roughness:0.05,metalness:0,transparent:true,opacity:0.3,transmission:0.6}),
+  lampShade: new THREE.MeshToonMaterial({color:'#ffe080',gradientMap:_gradientMap,emissive:'#ffcc50',emissiveIntensity:0.6,transparent:true,opacity:0.95}),
+  shellPink: mcolor('#f0a8b0'),
+  shellCream: mcolor('#fff0d8'),
+  mugCoral: mcolor('#ff8870'),
+  keyboard: mcolor('#e8e8e0'),
+  lighthouseR: mcolor('#e85858'),
+  lighthouseW: mcolor('#fff8f0'),
 };
 
 const panel=document.getElementById('panel'),panelTitle=document.getElementById('panel-title'),panelDot=document.getElementById('panel-dot');
 const panelStats=document.getElementById('panel-stats'),panelFilters=document.getElementById('panel-filters'),taskListEl=document.getElementById('task-list');
 const hint=document.getElementById('hint'),collabIndicator=document.getElementById('collab-indicator');
 
-const scene=new THREE.Scene();scene.background=new THREE.Color('#dcd6cc');scene.fog=new THREE.Fog('#dcd6cc',32,62);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#bfe0f5');scene.fog=new THREE.Fog('#cfe8f5',34,66);
 const container=document.getElementById('canvas-container');
 const camera=new THREE.PerspectiveCamera(38,container.clientWidth/container.clientHeight,0.5,75);
-camera.position.set(15,14,22);camera.lookAt(15,0,11);
+camera.position.set(12,16,24);camera.lookAt(12,0,9);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
 renderer.setSize(container.clientWidth,container.clientHeight);renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -490,7 +564,7 @@ renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.
 container.appendChild(renderer.domElement);
 
 let animId=0;
-const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(15,0,11);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(12,0,9);
 function animateCameraTo(tx,ty,tz,lookX,lookY,lookZ,duration=1.6){
   animId++;const id=animId;
   gsap.killTweensOf(camera.position);
@@ -522,26 +596,26 @@ function animateToZone(zone,duration=1.6){
   animateCameraTo(lookFromX,camY,lookFromZ,cx,0,cz,duration);
 }
 function animateToOverview(duration=1.8){
-  animateCameraTo(15,14,22,15,0,11,duration);
+  animateCameraTo(12,16,24,12,0,9,duration);
 }
-controls.enableDamping=true;controls.dampingFactor=0.08;controls.minDistance=10;controls.maxDistance=38;
+controls.enableDamping=true;controls.dampingFactor=0.08;controls.minDistance=8;controls.maxDistance=32;
 controls.maxPolarAngle=Math.PI/2.3;controls.minPolarAngle=0.22;
 controls.minAzimuthAngle=-Infinity;controls.maxAzimuthAngle=Infinity;
 controls.update();
 
 const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
 
-scene.add(new THREE.AmbientLight('#f5f0e8',2.8));
-const sun=new THREE.DirectionalLight('#fffaf2',5);
-sun.position.set(28,35,-15);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+scene.add(new THREE.AmbientLight('#fff0e0',1.1));
+const sun=new THREE.DirectionalLight('#fff6e8',3.2);
+sun.position.set(20,32,-12);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
 sun.shadow.camera.near=0.5;sun.shadow.camera.far=75;
 sun.shadow.camera.left=-20;sun.shadow.camera.right=20;
 sun.shadow.camera.top=18;sun.shadow.camera.bottom=-12;sun.shadow.bias=-0.00006;
 scene.add(sun);
-const fill=new THREE.DirectionalLight('#d4dae4',1.6);fill.position.set(-14,12,26);scene.add(fill);
+const fill=new THREE.DirectionalLight('#cce0ff',1.3);fill.position.set(-14,12,26);scene.add(fill);
 
 function addInteriorLight(zone){
-  const light=new THREE.PointLight('#fff4e0',0.7,zone.w*2.5,1.5);
+  const light=new THREE.PointLight('#ffd870',1.4,zone.w*2.5,1.5);
   light.position.set(zone.cx,2.4,zone.cz);
   if(!zone.openPlan)scene.add(light);
   else{light.position.set(zone.cx+zone.w/2-0.3,2.4,zone.cz);scene.add(light);}
@@ -551,13 +625,13 @@ function makePlaque(parent, text, color, x, y, z, rotY=0){
   const group=new THREE.Group();
   const w=2.8, h=0.7;
   const bg=new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.06),
-    new THREE.MeshStandardMaterial({color:'#3a3430',roughness:0.25,metalness:0.3}));
+    mcolor('#3a3430'));
   group.add(bg);
   const frame=new THREE.Mesh(new THREE.BoxGeometry(w+0.14, h+0.14, 0.03),
-    new THREE.MeshStandardMaterial({color:'#5a5248',roughness:0.3,metalness:0.5}));
+    mcolor('#5a5248'));
   frame.position.z=-0.04;group.add(frame);
   const frameR=new THREE.Mesh(new THREE.BoxGeometry(w+0.14, h+0.14, 0.03),
-    new THREE.MeshStandardMaterial({color:'#5a5248',roughness:0.3,metalness:0.5}));
+    mcolor('#5a5248'));
   frameR.position.z=0.04;group.add(frameR);
 
   const cv=document.createElement('canvas');cv.width=640;cv.height=160;
@@ -581,27 +655,35 @@ function makePlaque(parent, text, color, x, y, z, rotY=0){
 }
 
 function createMainFloor(){
-  const mt=MATS.woodFloor.clone();mt.map.repeat.set(8,7);
-  const f=new THREE.Mesh(new THREE.PlaneGeometry(31,28),mt);
-  f.rotation.x=-Math.PI/2;f.position.set(14.5,-0.04,13);f.receiveShadow=true;scene.add(f);
-  const pad=new THREE.Mesh(new THREE.PlaneGeometry(31.2,28.2),mcolor('#b0a490',{roughness:0.88}));
-  pad.rotation.x=-Math.PI/2;pad.position.set(14.5,-0.1,13);pad.receiveShadow=true;scene.add(pad);
+  // 建筑主体地板 24×18
+  const mt=MATS.woodFloor.clone();mt.map.repeat.set(8,6);
+  const f=new THREE.Mesh(new THREE.PlaneGeometry(24,18),mt);
+  f.rotation.x=-Math.PI/2;f.position.set(12,-0.04,9);f.receiveShadow=true;scene.add(f);
+  const pad=new THREE.Mesh(new THREE.PlaneGeometry(24.2,18.2),mcolor('#b0a490',{roughness:0.88}));
+  pad.rotation.x=-Math.PI/2;pad.position.set(12,-0.1,9);pad.receiveShadow=true;scene.add(pad);
 
-  const am=MATS.woodAtrium.clone();am.map.repeat.set(6,3);
-  const atrium=new THREE.Mesh(new THREE.PlaneGeometry(27,6),am);
-  atrium.rotation.x=-Math.PI/2;atrium.position.set(14.5,-0.015,10);atrium.receiveShadow=true;scene.add(atrium);
+  const am=MATS.woodAtrium.clone();am.map.repeat.set(4,3);
+  // 东走廊（CMO开放区东缘与CPO/CEO/CFO之间）
+  const corrE=new THREE.Mesh(new THREE.PlaneGeometry(2,18),am);
+  corrE.rotation.x=-Math.PI/2;corrE.position.set(18,-0.015,9);corrE.receiveShadow=true;scene.add(corrE);
+  // 南露台（CTO与CFO之间，对应平面图南侧露台）
+  const terraceS=new THREE.Mesh(new THREE.PlaneGeometry(8,5),am.clone());
+  terraceS.rotation.x=-Math.PI/2;terraceS.position.set(12,-0.015,15.5);terraceS.receiveShadow=true;scene.add(terraceS);
+  // 西露台（建筑外侧西侧，对应平面图西侧大露台）
+  const terraceW=new THREE.Mesh(new THREE.PlaneGeometry(4,8),am.clone());
+  terraceW.rotation.x=-Math.PI/2;terraceW.position.set(-2,-0.015,9);terraceW.receiveShadow=true;scene.add(terraceW);
 }
 createMainFloor();
 
 function createDoor(parentGroup, gapW=0.8, doorH=2, isDouble=false){
   const pivot=new THREE.Group();
   const leaves=isDouble?2:1, lw=gapW/leaves;
-  const dm=new THREE.MeshBasicMaterial({map:woodTex('#c8b490','90,72,48'),side:THREE.DoubleSide});
+  const dm=new THREE.MeshToonMaterial({map:woodTex('#c8b490','90,72,48'),gradientMap:_gradientMap,side:THREE.DoubleSide});
   for(let i=0;i<leaves;i++){
     const lg=new THREE.Group();
     const door=new THREE.Mesh(new THREE.BoxGeometry(lw,doorH,0.06),dm);
     door.position.set(lw/2,doorH/2,0);lg.add(door);
-    const knob=new THREE.Mesh(new THREE.SphereGeometry(0.04,12,12),new THREE.MeshStandardMaterial({color:'#c8b088',roughness:0.18,metalness:0.85}));
+    const knob=new THREE.Mesh(new THREE.SphereGeometry(0.04,12,12),mcolor('#c8b088'));
     knob.position.set(lw-0.14,doorH/2+0.08,0.035);lg.add(knob);
     lg.position.x=i*lw;pivot.add(lg);
     if(i===0)pivot.userData={...pivot.userData,firstLeaf:lg};
@@ -613,69 +695,194 @@ function createDoor(parentGroup, gapW=0.8, doorH=2, isDouble=false){
   return pivot;
 }
 
-function createBench(parent,x,z,rotY=0){
+// ===== 海岸风物件创建函数（样板间级别） =====
+
+function createCoastalBench(parent,x,z,rotY=0){
   const g=new THREE.Group();
-  const seat=new THREE.Mesh(new THREE.BoxGeometry(2,0.06,0.5),MATS.deskDark);
-  seat.position.y=0.44;g.add(seat);
-  const back=new THREE.Mesh(new THREE.BoxGeometry(2,0.35,0.05),MATS.deskDark);
-  back.position.set(0,0.64,-0.25);g.add(back);
-  for(let lx=-0.8;lx<=0.8;lx+=1.6){
-    const leg=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.42,0.08),MATS.metalDark);
-    leg.position.set(lx,0.21,0);g.add(leg);
-  }
-  g.position.set(x,0,z);g.rotation.y=rotY;g.castShadow=true;g.receiveShadow=true;
-  parent.add(g);return g;
+  const seat=box(2,0.08,0.52,MATS.coastDesk);seat.position.y=0.44;g.add(seat);
+  const back=box(2,0.32,0.06,MATS.coastWoodDark);back.position.set(0,0.62,-0.22);g.add(back);
+  const legL=box(0.08,0.42,0.08,MATS.coastWoodDark);legL.position.set(-0.85,0.21,0);g.add(legL);
+  const legR=box(0.08,0.42,0.08,MATS.coastWoodDark);legR.position.set(0.85,0.21,0);g.add(legR);
+  g.position.set(x,0,z);g.rotation.y=rotY;parent.add(g);return g;
 }
 
-function createPrinter(parent,x,z,rotY=0){
+function createWickerBasket(parent,x,z,rotY=0,s=1){
   const g=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.45,0.5),mcolor('#ccc4b8',{roughness:0.3,metalness:0.1}));
-  body.position.y=0.43;g.add(body);
-  const top=new THREE.Mesh(new THREE.BoxGeometry(0.68,0.03,0.48),mcolor('#b8b0a4',{roughness:0.28}));
-  top.position.y=0.67;g.add(top);
-  const tray=new THREE.Mesh(new THREE.BoxGeometry(0.45,0.04,0.14),mcolor('#c0b8ac',{roughness:0.3}));
-  tray.position.set(0,0.3,-0.25);g.add(tray);
-  const paper=new THREE.Mesh(new THREE.BoxGeometry(0.43,0.015,0.12),new THREE.MeshStandardMaterial({color:'#faf8f4',roughness:0.5}));
-  paper.position.set(0,0.32,-0.25);g.add(paper);
-  g.position.set(x,0,z);g.rotation.y=rotY;g.castShadow=true;g.receiveShadow=true;parent.add(g);return g;
+  const body=cyl(0.22*s,0.18*s,0.28*s,MATS.rope,20);body.position.y=0.14*s;g.add(body);
+  const rim=cyl(0.22*s,0.22*s,0.05*s,MATS.coastWoodDark,20);rim.position.y=0.28*s;g.add(rim);
+  g.position.set(x,0,z);g.rotation.y=rotY;parent.add(g);return g;
 }
 
-function createCoffeeMachine(parent,x,z,rotY=0){
+function createShellJar(parent,x,z,rotY=0,s=1){
   const g=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.45,0.3),mcolor('#484842',{roughness:0.22,metalness:0.6}));
-  body.position.y=0.35;g.add(body);
-  const top=new THREE.Mesh(new THREE.BoxGeometry(0.38,0.04,0.28),mcolor('#585852',{roughness:0.2,metalness:0.5}));
-  top.position.y=0.6;g.add(top);
-  const drip=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,0.12,12),MATS.metalDark);
-  drip.position.set(0.1,0.28,0.12);g.add(drip);
-  const pf=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.04,16),MATS.metalDark);
-  pf.position.set(0.1,0.32,0.12);g.add(pf);
-  const cup=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.05,0.08,16),mcolor('#ece8e0',{roughness:0.18}));
-  cup.position.set(0.1,0.22,0.12);g.add(cup);
-  g.position.set(x,0,z);g.rotation.y=rotY;g.castShadow=true;g.receiveShadow=true;parent.add(g);return g;
-}
-
-function createFilingCabinet(parent,x,z,rotY=0){
-  const g=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.BoxGeometry(0.5,1.2,0.55),MATS.metal);
-  body.position.y=0.6;g.add(body);
+  const jar=new THREE.Mesh(new THREE.CylinderGeometry(0.07*s,0.06*s,0.14*s,16),MATS.glass);jar.position.y=0.07*s;g.add(jar);
+  const lidColors=[MATS.chairCoral,MATS.plantPotBlue,MATS.brass,MATS.plantLeaf];
+  const lidColor=lidColors[Math.floor(Math.random()*lidColors.length)];
+  const lid=cyl(0.075*s,0.075*s,0.025*s,lidColor,16);lid.position.y=0.15*s;g.add(lid);
+  const shellColors=[MATS.shellCream,MATS.shellPink,'#ffe080','#7ad890'];
   for(let i=0;i<3;i++){
-    const drawer=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.3,0.02),MATS.metalDark);
-    drawer.position.set(0,0.25+i*0.35,0.27);g.add(drawer);
-    const h=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.2,8),MATS.metalDark);
-    h.rotation.x=Math.PI/2;h.position.set(0,0.25+i*0.35,0.28);g.add(h);
+    const sc=shellColors[Math.floor(Math.random()*shellColors.length)];
+    const sh=sphere(0.022*s,sc,8);sh.scale.set(1,0.5,1);
+    sh.position.set((i-1)*0.025*s,0.04*s,(i%2)*0.02*s);g.add(sh);
   }
-  g.position.set(x,0,z);g.rotation.y=rotY;g.castShadow=true;g.receiveShadow=true;parent.add(g);return g;
+  g.position.set(x,0,z);g.rotation.y=rotY;parent.add(g);return g;
 }
 
-function createPlant(parent,x,z,s=1){
+function createTreasureChest(parent,x,z,rotY=0,s=1){
   const g=new THREE.Group();
-  const pot=new THREE.Mesh(new THREE.CylinderGeometry(0.2*s,0.16*s,0.4*s,16),MATS.plantPot);
-  pot.position.y=0.2*s;g.add(pot);
-  const leaves=new THREE.Mesh(new THREE.SphereGeometry(0.3*s,10,8),MATS.plantLeaf);
-  leaves.position.y=0.55*s;leaves.scale.set(0.85,1.3,0.85);g.add(leaves);
-  g.position.set(x,0,z);g.castShadow=true;g.receiveShadow=true;parent.add(g);return g;
+  const body=box(0.7*s,0.42*s,0.5*s,MATS.coastWood);body.position.y=0.24*s;g.add(body);
+  // 弧形箱盖（半圆柱）
+  const lid=new THREE.Mesh(new THREE.CylinderGeometry(0.25*s,0.25*s,0.5*s,20,1,false,0,Math.PI),MATS.coastWoodDark);
+  lid.position.set(0,0.5*s,0);lid.rotation.z=Math.PI/2;g.add(lid);
+  // 黄铜横箍（两道）
+  [0.15*s,0.42*s].forEach(y=>{const band=box(0.72*s,0.05*s,0.52*s,MATS.brass);band.position.set(0,y,0);g.add(band);});
+  // 黄铜锁扣
+  const lockBase=box(0.12*s,0.14*s,0.04*s,MATS.brass);lockBase.position.set(0,0.36*s,0.26*s);g.add(lockBase);
+  const lockRing=torus(0.04*s,0.012*s,MATS.brass,16);lockRing.position.set(0,0.36*s,0.29*s);lockRing.rotation.x=Math.PI/2;g.add(lockRing);
+  // 箱角黄铜包角
+  [[0.31*s,0.21*s],[0.31*s,-0.21*s],[-0.31*s,0.21*s],[-0.31*s,-0.21*s]].forEach(([lx,lz])=>{
+    const corner=box(0.08*s,0.08*s,0.08*s,MATS.brass);corner.position.set(lx,0.42*s,lz);g.add(corner);
+    const cornerB=box(0.08*s,0.08*s,0.08*s,MATS.brass);cornerB.position.set(lx,0.06*s,lz);g.add(cornerB);
+  });
+  g.position.set(x,0,z);g.rotation.y=rotY;parent.add(g);return g;
 }
+
+function createCoastalPlant(parent,x,z,s=1){
+  const g=new THREE.Group();
+  const potColor=Math.random()>0.5?MATS.plantPot:MATS.plantPotBlue;
+  const pot=cyl(0.24*s,0.2*s,0.42*s,potColor,20);pot.position.y=0.21*s;g.add(pot);
+  const potRim=cyl(0.24*s,0.24*s,0.06*s,potColor,20);potRim.position.y=0.4*s;g.add(potRim);
+  for(let i=0;i<7;i++){
+    const a=i/7*Math.PI*2;
+    const leaf=sphere(0.14*s,i%2?MATS.plantLeaf:MATS.plantLeafDark,14);
+    leaf.position.set(Math.cos(a)*0.16*s,0.6*s+Math.random()*0.12*s,Math.sin(a)*0.16*s);
+    leaf.scale.set(1,1.1,1);g.add(leaf);
+  }
+  const top=sphere(0.18*s,MATS.plantLeaf,16);top.scale.set(1,1.2,1);top.position.y=0.7*s;g.add(top);
+  for(let i=0;i<4;i++){
+    const a=i/4*Math.PI*2;
+    const blade=sphere(0.05*s,MATS.plantLeafDark,8);blade.scale.set(0.5,3,0.5);
+    blade.position.set(Math.cos(a)*0.1*s,0.85*s,Math.sin(a)*0.1*s);
+    blade.rotation.set(0.2,a,Math.cos(a)*0.3);g.add(blade);
+  }
+  g.position.set(x,0,z);parent.add(g);return g;
+}
+
+// 珊瑚色办公椅（椅身一体成型：座垫+靠背弧+头枕+扶手 合并为单件）
+function createChair(parent,x,z,rotY=0,color=MATS.chairCoral){
+  const g=new THREE.Group();
+  // 金属支架
+  const cBase=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.34,0.06,5),MATS.metalDark);cBase.position.y=0.03;g.add(cBase);
+  for(let i=0;i<5;i++){const a=i/5*Math.PI*2;const wheel=sphere(0.05,MATS.metalDark,10);wheel.position.set(Math.cos(a)*0.3,0.04,Math.sin(a)*0.3);wheel.scale.set(1,0.6,1);g.add(wheel);}
+  const cPole=cyl(0.028,0.034,0.4,MATS.metalDark,10);cPole.position.y=0.25;g.add(cPole);
+  // 椅身一体件
+  const chairBody=merged([
+    bake(new RoundedBoxGeometry(0.52,0.14,0.52,5,0.07),0,0.5,0),
+    bake(new THREE.CylinderGeometry(0.24,0.27,0.07,22),0,0.57,0,0,0,0,1,1,1.1),
+    bake(new THREE.CylinderGeometry(0.35,0.35,0.12,22,1,false,0,Math.PI*0.62),0,0.78,-0.16,Math.PI/2,0,0),
+    bake(new THREE.SphereGeometry(0.23,18,18),0,1.14,-0.2,0,0,0,1,0.58,0.5),
+    bake(new THREE.CylinderGeometry(0.05,0.05,0.36,12),-0.27,0.62,0.08,Math.PI/2,0,0),
+    bake(new THREE.CylinderGeometry(0.05,0.05,0.36,12),0.27,0.62,0.08,Math.PI/2,0,0),
+    bake(new THREE.CylinderGeometry(0.045,0.045,0.26,12),-0.27,0.47,0.22),
+    bake(new THREE.CylinderGeometry(0.045,0.045,0.26,12),0.27,0.47,0.22),
+  ],color);
+  g.add(chairBody);
+  g.position.set(x,0,z);g.rotation.y=rotY;parent.add(g);return g;
+}
+
+// 鹅颈台灯（底盘+鹅颈管合并为单件黄铜，灯罩嵌套在管端）
+function createDeskLamp(parent,x,z,rotY=0){
+  const g=new THREE.Group();
+  const neckCurve=new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0,0,0),
+    new THREE.Vector3(0,0.3,0),
+    new THREE.Vector3(0,0.45,0.10),
+    new THREE.Vector3(0,0.48,0.26),
+    new THREE.Vector3(0,0.42,0.40),
+  ]);
+  const lampBody=merged([
+    bake(new THREE.CylinderGeometry(0.12,0.14,0.05,20),0,0,0),
+    new THREE.TubeGeometry(neckCurve,28,0.02,12,false),
+  ],MATS.brass);
+  g.add(lampBody);
+  const shade=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.16,0.15,20,1,true),
+    MATS.lampShade);
+  shade.position.set(0,0.40,0.44);g.add(shade);
+  const bulb=sphere(0.05,new THREE.MeshBasicMaterial({color:'#fff0b0'}));bulb.position.set(0,0.38,0.44);g.add(bulb);
+  g.position.set(x,0.76,z);g.rotation.y=rotY;parent.add(g);return g;
+}
+
+// 绳索吊灯（绳索吊，对应风格图）
+function createPendantLamp(parent,x,y,z){
+  const g=new THREE.Group();
+  const cord=cyl(0.022,0.022,0.7,MATS.rope,8);cord.position.set(0,2.75,z);g.add(cord);
+  const shade=new THREE.Mesh(new THREE.SphereGeometry(0.24,28,18,0,Math.PI*2,0,Math.PI*0.55),MATS.lampShade);
+  shade.scale.set(1,0.9,1);shade.position.set(0,2.42,z);shade.rotation.x=Math.PI;g.add(shade);
+  const cap=cyl(0.22,0.22,0.05,MATS.metalDark,16);cap.position.set(0,2.54,z);g.add(cap);
+  const bulb=sphere(0.1,new THREE.MeshBasicMaterial({color:'#fff0b0'}));bulb.position.set(0,2.4,z);g.add(bulb);
+  const pKnot=sphere(0.05,MATS.rope,12);pKnot.position.set(0,2.6,z);g.add(pKnot);
+  g.position.set(x,y,0);parent.add(g);return g;
+}
+
+function createShipWheel(parent,x,y,z,rotY=0){
+  const g=new THREE.Group();
+  const ring=torus(0.35,0.035,MATS.brass,20);g.add(ring);
+  for(let i=0;i<8;i++){
+    const a=(i/8)*Math.PI*2;
+    const spoke=cyl(0.015,0.015,0.7,MATS.brass,8);
+    spoke.rotation.z=Math.PI/2;spoke.rotation.y=a;
+    g.add(spoke);
+  }
+  const hub=cyl(0.06,0.06,0.08,MATS.coastWoodDark,12);hub.rotation.x=Math.PI/2;g.add(hub);
+  g.position.set(x,y,z);g.rotation.y=rotY;parent.add(g);return g;
+}
+
+function createRopeCoil(parent,x,y,z,rotY=0,r=0.12){
+  const g=new THREE.Group();
+  for(let i=0;i<3;i++){
+    const loop=torus(r+i*0.025,0.025,MATS.rope,14);loop.rotation.x=Math.PI/2;
+    loop.position.y=i*0.04;g.add(loop);
+  }
+  g.position.set(x,y,z);g.rotation.y=rotY;parent.add(g);return g;
+}
+
+function createSurfboard(parent,x,y,z,rotY=0,color='#e8a878'){
+  const g=new THREE.Group();
+  const board=merged([
+    bake(new RoundedBoxGeometry(1.4,0.06,0.36,6,0.1),0,0,0),
+  ],mcolor(color));
+  const fin=box(0.12,0.12,0.03,MATS.coastWoodDark);fin.position.set(-0.5,0,0);g.add(fin);
+  g.add(board);
+  g.position.set(x,y,z);g.rotation.y=rotY;parent.add(g);return g;
+}
+
+function createShellFountain(parent,x,z){
+  const g=new THREE.Group();
+  const basin=cyl(0.35,0.28,0.15,MATS.brass);basin.position.y=0.075;g.add(basin);
+  const shellTop=merged([
+    bake(new THREE.SphereGeometry(0.2,16,8,0,Math.PI*2,0,Math.PI/2),0,0.15,0),
+  ],MATS.shellCream);g.add(shellTop);
+  const water=cyl(0.03,0.06,0.12,MATS.glass,12);water.position.y=0.25;g.add(water);
+  g.position.set(x,0,z);parent.add(g);return g;
+}
+
+// 双显示器（圆角厚实卡通款，带屏幕内容）
+function createMonitor(parent,x,z,rotY=0){
+  const g=new THREE.Group();
+  const screen=box(0.6,0.38,0.06,mcolor('#2a2832'));screen.position.set(0,1.05,0);g.add(screen);
+  const scrContent=new THREE.Mesh(new THREE.PlaneGeometry(0.52,0.34),new THREE.MeshBasicMaterial({color:'#5ab0d0'}));
+  scrContent.position.set(0,1.05,0.03);g.add(scrContent);
+  const bar=new THREE.Mesh(new THREE.PlaneGeometry(0.32,0.04),new THREE.MeshBasicMaterial({color:'#7ad890'}));
+  bar.position.set(-0.05,1.12,0.035);g.add(bar);
+  const stand=box(0.18,0.1,0.2,MATS.metalDark);stand.position.set(0,0.88,0);g.add(stand);
+  const pole=cyl(0.04,0.04,0.14,MATS.metalDark,8);pole.position.set(0,0.94,0);g.add(pole);
+  // 圆角键盘
+  const kb=box(0.5,0.03,0.17,MATS.keyboard);kb.position.set(0,0.82,0.3);g.add(kb);
+  const mouse=sphere(0.06,MATS.keyboard,12);mouse.scale.set(1.2,0.5,1.7);mouse.position.set(0.42,0.825,0.32);g.add(mouse);
+  g.position.set(x,0,z);g.rotation.y=rotY;parent.add(g);return g;
+}
+
+function createPlant(parent,x,z,s=1){return createCoastalPlant(parent,x,z,s);}
 
 function createRoom(zone){
   const{cx,cz,w,d,carpetColor,doorWall,doorPos}=zone;
@@ -687,11 +894,11 @@ function createRoom(zone){
   platform.position.y=0.04;platform.receiveShadow=true;group.add(platform);
 
   const cg=new THREE.PlaneGeometry(w-0.6,d-0.6);
-  const carpet=new THREE.Mesh(cg,new THREE.MeshStandardMaterial({map:carpetTex(carpetColor),roughness:0.88,metalness:0}));
+  const carpet=new THREE.Mesh(cg,new THREE.MeshToonMaterial({map:carpetTex(carpetColor),gradientMap:_gradientMap}));
   carpet.rotation.x=-Math.PI/2;carpet.position.y=0.085;carpet.receiveShadow=true;group.add(carpet);
 
   const fcGeo=new THREE.PlaneGeometry(w-0.2,d-0.2);
-  const fc=new THREE.Mesh(fcGeo,new THREE.MeshStandardMaterial({color:zone.color,roughness:0.78,metalness:0,transparent:true,opacity:0.25,depthWrite:false}));
+  const fc=new THREE.Mesh(fcGeo,mcolor(zone.color,{transparent:true,opacity:0.25,depthWrite:false}));
   fc.rotation.x=-Math.PI/2;fc.position.y=0.09;
   fc.userData={zoneId:zone.id,isFloor:true,color:zone.color};
   group.add(fc);allRoomFloorMeshes.push(fc);
@@ -751,10 +958,6 @@ function createRoom(zone){
   if(isOpen && zone.id==='cmo'){
     const bw=new THREE.Mesh(new THREE.BoxGeometry(wallT,wallH,d),wm);
     bw.position.set(-hw,wallH/2,0);bw.castShadow=true;bw.receiveShadow=true;group.add(bw);
-    const tw=new THREE.Mesh(new THREE.BoxGeometry(w,wallH,wallT),wm);
-    tw.position.set(0,wallH/2,-hd);tw.castShadow=true;tw.receiveShadow=true;group.add(tw);
-    const bw2=new THREE.Mesh(new THREE.BoxGeometry(w,wallH,wallT),wm);
-    bw2.position.set(0,wallH/2,hd);bw2.castShadow=true;bw2.receiveShadow=true;group.add(bw2);
     makePlaque(group,zone.name,zone.color,-hw-0.25,2.2,0,Math.PI/2);
   }
 
@@ -763,15 +966,13 @@ function createRoom(zone){
 }
 
 function deskLegs(g,x,z,w,h=0.72){
-  const legMat=MATS.metalDark;
   [[-w/2+0.1,z-0.22],[w/2-0.1,z-0.22],[-w/2+0.1,z+0.22],[w/2-0.1,z+0.22]].forEach(([lx,lz])=>{
-    const leg=new THREE.Mesh(new THREE.BoxGeometry(0.05,h,0.05),legMat);
-    leg.position.set(lx,h/2+0.04,lz);leg.castShadow=true;leg.receiveShadow=true;g.add(leg);
+    const leg=box(0.1,h,0.1,MATS.coastWoodDark);
+    leg.position.set(lx,h/2+0.04,lz);g.add(leg);
   });
 }
-function deskTop(g,x,z,w,d=0.7,mat=MATS.deskLight){
-  const top=new THREE.Mesh(new THREE.BoxGeometry(w,0.06,d),mat);
-  top.position.set(x,0.76,z);top.castShadow=true;top.receiveShadow=true;g.add(top);
+function deskTop(g,x,z,w,d=0.7,mat=MATS.coastDesk){
+  const top=box(w,0.08,d,mat);top.position.set(x,0.78,z);g.add(top);
 }
 
 function addFurniture(){
@@ -780,137 +981,155 @@ function addFurniture(){
     const g=new THREE.Group();
     const hw=w/2,hd=d/2;
 
-    if(id==='ceo'){
-      deskTop(g,0,-hd*0.25,2.5,1.1,MATS.deskLight);deskLegs(g,0,-hd*0.25,2.5);
-      const seat=new THREE.Mesh(new THREE.BoxGeometry(0.54,0.06,0.54),MATS.chairLeather);
-      seat.position.set(0,0.5,-hd*0.25+0.68);g.add(seat);
-      const bk=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.05),MATS.chairLeather);
-      bk.position.set(0,0.78,-hd*0.25+0.38);g.add(bk);
-      const base=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.24,0.06,24),MATS.metalDark);
-      base.position.set(0,0.44,-hd*0.25+0.68);g.add(base);
-      const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.35,8),MATS.metalDark);
-      pole.position.set(0,0.26,-hd*0.25+0.68);g.add(pole);
-      const mon=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.38,0.05),
-        new THREE.MeshStandardMaterial({color:'#2a2824',roughness:0.16,metalness:0.4}));
-      mon.position.set(0,0.99,-hd*0.25+0.12);g.add(mon);
-      const stand=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.08,0.2),MATS.metalDark);
-      stand.position.set(0,0.8,-hd*0.25+0.12);g.add(stand);
-      const shelf=new THREE.Mesh(new THREE.BoxGeometry(0.25,1.6,1),MATS.deskDark);
-      shelf.position.set(-hw+0.3,0.8,hd*0.3);shelf.castShadow=true;shelf.receiveShadow=true;g.add(shelf);
-      const flag=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.5,0.3),MATS.plantPot);
-      flag.position.set(hw-0.4,1.05,-hd+0.4);g.add(flag);
-      const flagPole=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,1.2,8),MATS.metalDark);
-      flagPole.position.set(hw-0.4,0.6,-hd+0.4);g.add(flagPole);
-      createPlant(g,-hw+0.8,hd-0.8);createPlant(g,hw-0.6,hd-0.6);
-    }else if(id==='cro'){
-      deskTop(g,0,-hd*0.25,1.8,0.85);deskLegs(g,0,-hd*0.25,1.8);
-      [-0.4,0.4].forEach(ox=>{
-        const mon=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.34,0.05),
-          new THREE.MeshStandardMaterial({color:'#2a2824',roughness:0.16,metalness:0.4}));
-        mon.position.set(ox,0.99,-hd*0.25+0.1);g.add(mon);
+    // ===== CRO 风控中心 — 北排西北角（小型监控室）
+    if(id==='cro'){
+      deskTop(g,0,-hd*0.2,1.4,0.7,MATS.coastDesk);deskLegs(g,0,-hd*0.2,1.4);
+      createMonitor(g,0,-hd*0.2+0.1);
+      createChair(g,0,-hd*0.2+0.65,Math.PI,mcolor('#c45a58'));
+      createDeskLamp(g,0.5,-hd*0.2+0.15,Math.PI/4);
+      createPendantLamp(g,0,0,0);
+      const scope=merged([bake(new THREE.CylinderGeometry(0.04,0.05,0.5,16),0,1.6,-hd+0.3,Math.PI/2,0,0)],MATS.brass);g.add(scope);
+      const stand=box(0.1,0.7,0.1,MATS.coastWoodDark);stand.position.set(0,0.35,-hd+0.3);g.add(stand);
+      createShipWheel(g,-hw+0.25,1.8,hd-0.3,0);
+      createWickerBasket(g,hw-0.4,hd-0.4,0,0.8);
+      createCoastalPlant(g,hw-0.4,-hd+0.5,0.75);
+    }
+
+    // ===== COO 运营中心 — 北排中部（厨房区）
+    else if(id==='coo'){
+      [[1.5,-hd*0.15],[-1.0,-hd*0.15]].forEach(([ox,oz])=>{
+        deskTop(g,ox,oz,1.3,0.7);deskLegs(g,ox,oz,1.3);
+        createMonitor(g,ox,oz+0.1);
+        createChair(g,ox,oz-0.6,0);
       });
-      const alarm=new THREE.Mesh(new THREE.SphereGeometry(0.08,12,12),
-        new THREE.MeshStandardMaterial({color:'#cc3333',roughness:0.1,emissive:'#cc3333',emissiveIntensity:0.4}));
-      alarm.position.set(hw-0.4,2.2,-hd+0.4);g.add(alarm);
-      const cb=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.4,0.04),
-        new THREE.MeshStandardMaterial({color:'#f8f4ee',roughness:0.3}));
-      cb.position.set(-hw+0.5,0.9,hd-0.2);g.add(cb);
-    }else if(id==='cpo'){
-      deskTop(g,0,-hd*0.05,3.2,1.5,MATS.deskLight);deskLegs(g,0,-hd*0.05,3.2,0.72);
-      const wbF=new THREE.Mesh(new THREE.BoxGeometry(0.05,1.6,2.4),MATS.metal);
-      wbF.position.set(-hw+0.15,0.8,0);wbF.castShadow=true;g.add(wbF);
-      const wbP=new THREE.Mesh(new THREE.BoxGeometry(0.01,1.5,2.3),
-        new THREE.MeshStandardMaterial({color:'#f6f4ee',roughness:0.25}));
-      wbP.position.set(-hw+0.12,0.8,0);g.add(wbP);
-      const sw1=new THREE.Mesh(new THREE.BoxGeometry(0.25,0.02,0.2),
-        new THREE.MeshStandardMaterial({color:'#d85a30',roughness:0.3}));
-      sw1.position.set(-hw+0.12,1.2,-0.6);g.add(sw1);
-      const sw2=new THREE.Mesh(new THREE.BoxGeometry(0.25,0.02,0.2),
-        new THREE.MeshStandardMaterial({color:'#378add',roughness:0.3}));
-      sw2.position.set(-hw+0.12,0.9,0.6);g.add(sw2);
-      const proto=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.3,0.25),
-        new THREE.MeshStandardMaterial({color:'#e8e0d4',roughness:0.3}));
-      proto.position.set(hw-1,0.83,-hd*0.05);g.add(proto);
-    }else if(id==='meeting'){
-      const tbl=new THREE.Mesh(new THREE.BoxGeometry(3.8,0.06,1.7),MATS.deskDark);
-      tbl.position.set(0,0.78,0);tbl.castShadow=true;tbl.receiveShadow=true;g.add(tbl);
+      createDeskLamp(g,1.5,-hd*0.15+0.15,Math.PI/4);
+      createPendantLamp(g,0,0,0);
+      createWickerBasket(g,-hw+0.6,hd-0.5,Math.PI,0.85);
+      createWickerBasket(g,hw-0.4,hd-0.5,Math.PI,0.8);
+      const dash=box(1.6,0.04,1.0,mcolor('#f0e8d4'));dash.position.set(0.3,0.78,hd*0.35);g.add(dash);
+      const dial1=cyl(0.07,0.07,0.03,MATS.brass,16);dial1.position.set(0.1,0.82,hd*0.35);g.add(dial1);
+      const dial2=cyl(0.07,0.07,0.03,MATS.brass,16);dial2.position.set(0.5,0.82,hd*0.35);g.add(dial2);
+      createShellJar(g,0.8,0,hd*0.35,0.65);
+      createCoastalPlant(g,hw-0.4,-hd+0.6,0.8);
+    }
+
+    // ===== Meeting 战略会议室 — 北排中右（餐厅区）
+    else if(id==='meeting'){
+      const tbl=box(3.2,0.08,1.4,MATS.coastDesk);tbl.position.set(0,0.78,0);g.add(tbl);
+      createPendantLamp(g,0,0,0);
       for(let i=0;i<4;i++){
-        const lx=(i-1.5)*0.9;
-        const leg=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.06,0.74,12),MATS.metalDark);
-        leg.position.set(lx,0.37,0.4);g.add(leg);
-        leg.position.set(lx,0.37,-0.4);leg.clone();g.add(new THREE.Mesh(leg.geometry,leg.material));
-        if(leg.position){leg.position.set(lx,0.37,-0.4);g.add(leg.clone?new THREE.Mesh(leg.geometry,leg.material):leg);}
+        const lx=(i-1.5)*0.75;
+        const leg=cyl(0.05,0.06,0.74,MATS.metalDark,12);leg.position.set(lx,0.37,0.3);g.add(leg);
+        const leg2=cyl(0.05,0.06,0.74,MATS.metalDark,12);leg2.position.set(lx,0.37,-0.3);g.add(leg2);
       }
-      for(let i=0;i<8;i++){
-        const a=(i/8)*Math.PI*2,sx=Math.cos(a)*2.2,sz=Math.sin(a)*1.2;
-        const seat=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.06,0.5),MATS.chairLeather);
-        seat.position.set(sx,0.49,sz);g.add(seat);
-        const bk=new THREE.Mesh(new THREE.BoxGeometry(0.48,0.42,0.04),MATS.chairLeather);
-        bk.position.set(sx,0.72,sz+0.24*Math.sign(sz||1));g.add(bk);
+      for(let i=0;i<6;i++){
+        const a=(i/6)*Math.PI*2,sx=Math.cos(a)*1.8,sz=Math.sin(a)*0.85;
+        createChair(g,sx,sz,a+Math.PI);
       }
-      const scr=new THREE.Mesh(new THREE.BoxGeometry(2.2,1.3,0.05),
-        new THREE.MeshStandardMaterial({color:'#2a2824',roughness:0.16,metalness:0.3}));
-      scr.position.set(0,0.95,hd-0.15);g.add(scr);
-    }else if(id==='coo'){
-      [[2.2,-hd*0.2],[-0.5,-hd*0.2]].forEach(([ox,oz])=>{
+      const scr=box(2.0,1.1,0.05,mcolor('#2a2824'));scr.position.set(0,1.0,hd-0.12);g.add(scr);
+      createShellJar(g,1.0,0,0.7,0.75);
+      createShellJar(g,-1.0,0,0.7,0.75);
+      createCoastalPlant(g,0,hd-0.4,0.75);
+    }
+
+    // ===== CEO 战略办公室 — 北排东北角（主卧）
+    else if(id==='ceo'){
+      deskTop(g,0,-hd*0.2,2.0,0.95,MATS.coastDesk);deskLegs(g,0,-hd*0.2,2.0);
+      createChair(g,0,-hd*0.2+0.65,Math.PI,MATS.chairCoral);
+      createMonitor(g,0,-hd*0.2+0.12);
+      createDeskLamp(g,-0.7,-hd*0.2+0.15,Math.PI/4);
+      createPendantLamp(g,0,0,0);
+      const shelf=box(0.25,1.2,0.9,MATS.coastWoodDark);shelf.position.set(-hw+0.25,0.6,hd*0.25);g.add(shelf);
+      createShellJar(g,-hw+0.25,hd*0.25,0,0.85);
+      createShipWheel(g,hw-0.25,1.8,-hd+0.25,Math.PI/2);
+      createTreasureChest(g,hw-0.5,hd-0.6,0,0.8);
+      createRopeCoil(g,hw-0.25,0.1,-hd+0.5,0,0.25);
+      createCoastalPlant(g,-hw+0.6,hd-0.6,0.85);
+      createCoastalPlant(g,hw-0.5,-hd+0.6,0.8);
+    }
+
+    // ===== CMO 营销中心 — 中央横厅（开放区）
+    else if(id==='cmo'){
+      // 两排工位，横向排列
+      const rows=2, desksPerRow=3;
+      for(let r=0;r<rows;r++){
+        const oz=-hd+2+r*(d-4)/(rows-1||1);
+        for(let i=0;i<desksPerRow;i++){
+          const ox=-hw+2+i*(w-4)/(desksPerRow-1||1);
+          deskTop(g,ox,oz,1.4,0.7);deskLegs(g,ox,oz,1.4,0.72);
+          createMonitor(g,ox+0.2,oz);
+          createChair(g,ox,oz-0.6,0,'#b89850');
+        }
+        createPendantLamp(g,-hw+2,0,oz);
+      }
+      // 白板台（东侧）
+      const board=box(0.06,1.2,2.5,mcolor('#f6f0e4'));board.position.set(hw-0.1,0.7,0);g.add(board);
+      // 贝壳装饰
+      createShellJar(g,-hw+1,-hd+0.8,0,0.9);
+      createShellJar(g,hw-1.5,hd-1,0,0.8);
+      // 植物
+      createCoastalPlant(g,-hw+1,hd-1,1.1);
+      createCoastalPlant(g,hw-1,-hd+1,1.0);
+      // 冲浪板装饰
+      createSurfboard(g,-hw+0.5,1.5,hd-0.5,0,'#e8a878');
+      // 中央点缀
+      createRopeCoil(g,0,0.1,0,0,0.2);
+    }
+
+    // ===== CPO 产品设计室 — 东侧中部（书房/茶室）
+    else if(id==='cpo'){
+      deskTop(g,0,-hd*0.1,2.5,1.2,MATS.coastDesk);deskLegs(g,0,-hd*0.1,2.5,0.72);
+      createChair(g,0,-hd*0.1+0.75,Math.PI,'#b08060');
+      createPendantLamp(g,0,0,-hd*0.1);
+      // 灵感板（西墙）
+      const wbF=box(0.06,1.4,2.0,MATS.coastWoodDark);wbF.position.set(-hw+0.15,0.75,0);g.add(wbF);
+      const wbP=box(0.02,1.3,1.9,mcolor('#f6f0e4'));wbP.position.set(-hw+0.12,0.75,0);g.add(wbP);
+      createShellJar(g,-hw+0.12,0.4,0,0.65);
+      createShellJar(g,-hw+0.12,-0.5,0,0.6);
+      // 原型展示台
+      const protoBase=box(0.45,0.35,0.3,MATS.coastWoodDark);protoBase.position.set(hw-0.8,0.18,hd*0.2);g.add(protoBase);
+      const proto=box(0.35,0.2,0.25,mcolor('#e8d4b0'));proto.position.set(hw-0.8,0.46,hd*0.2);g.add(proto);
+      createSurfboard(g,hw-0.25,1.4,-hd+0.4,Math.PI/2,'#d8a070');
+      createCoastalPlant(g,hw-0.5,hd-0.5,0.9);
+    }
+
+    // ===== CTO 技术中心 — 南排西南角
+    else if(id==='cto'){
+      const deskArea=hw*0.2;
+      deskTop(g,deskArea,-hd*0.2,1.5,0.7,MATS.coastDesk);deskLegs(g,deskArea,-hd*0.2,1.5);
+      createMonitor(g,deskArea,-hd*0.2+0.1);
+      createChair(g,deskArea,-hd*0.2-0.6,0,'#485c48');
+      createDeskLamp(g,deskArea-0.5,-hd*0.2+0.15,Math.PI/4);
+      createPendantLamp(g,deskArea,0,-hd*0.2);
+      // 贝壳罐置物架
+      const shelf1=box(1.8,0.06,0.45,MATS.coastWoodDark);shelf1.position.set(-hw+1.2,0.5,hd*0.15);g.add(shelf1);
+      const shelf2=box(1.8,0.06,0.45,MATS.coastWoodDark);shelf2.position.set(-hw+1.2,1.0,hd*0.15);g.add(shelf2);
+      const shelf3=box(1.8,0.06,0.45,MATS.coastWoodDark);shelf3.position.set(-hw+1.2,1.5,hd*0.15);g.add(shelf3);
+      const shelfBack=box(0.06,1.8,0.45,MATS.coastWoodDark);shelfBack.position.set(-hw+0.5,0.9,hd*0.15);g.add(shelfBack);
+      createShellJar(g,-hw+1.0,hd*0.15,0,0.75);
+      createShellJar(g,-hw+1.5,hd*0.15,0,0.75);
+      createShellJar(g,-hw+1.2,0.5,hd*0.15,0,0.65);
+      createRopeCoil(g,-hw+2.0,0.55,hd*0.15,0,0.25);
+      createRopeCoil(g,-hw+0.8,1.05,hd*0.15,0,0.2);
+      createCoastalPlant(g,hw-0.5,hd-0.5,0.85);
+    }
+
+    // ===== CFO 财务中心 — 南排东南角
+    else if(id==='cfo'){
+      [[-2.0,-hd*0.15],[-0.2,-hd*0.15],[1.8,hd*0.3]].forEach(([ox,oz])=>{
         deskTop(g,ox,oz,1.4,0.75);deskLegs(g,ox,oz,1.4);
-        const mon=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.34,0.05),
-          new THREE.MeshStandardMaterial({color:'#2a2824',roughness:0.16,metalness:0.4}));
-        mon.position.set(ox,0.99,oz+0.1);g.add(mon);
+        createMonitor(g,ox,oz+0.1);
+        createChair(g,ox,oz-0.6,0,MATS.chairLeather);
       });
-      createPrinter(g,-hw+0.7,hd-0.6,Math.PI);
-      createFilingCabinet(g,hw-0.5,hd-0.6,Math.PI);
-      const dash=new THREE.Mesh(new THREE.BoxGeometry(1.8,0.03,1.2),
-        new THREE.MeshStandardMaterial({color:'#f8f4ee',roughness:0.28}));
-      dash.position.set(0.8,0.78,hd*0.4);g.add(dash);
-    }else if(id==='cto'){
-      for(let i=0;i<3;i++){
-        const ox=-hw+1.2+i*2;
-        const rack=new THREE.Mesh(new THREE.BoxGeometry(0.55,2,0.8),
-          new THREE.MeshStandardMaterial({color:'#2a2824',roughness:0.2,metalness:0.6}));
-        rack.position.set(ox,1.05,-hd*0.15);rack.castShadow=true;rack.receiveShadow=true;g.add(rack);
-        for(let j=0;j<7;j++){
-          const lc=j%2===0?'#00ee55':'#00bb33';
-          const led=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.04,0.03),
-            new THREE.MeshStandardMaterial({color:lc,roughness:0.05,emissive:lc,emissiveIntensity:0.9}));
-          led.position.set(ox+0.2,0.25+j*0.26,-hd*0.15+0.4);led.renderOrder=1;g.add(led);
-        }
-      }
-      deskTop(g,hw*0.35,hd*0.4,1.3,0.7,MATS.deskLight);deskLegs(g,hw*0.35,hd*0.4,1.3);
-      const cable1=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.8,8),mcolor('#444',{roughness:0.3}));
-      cable1.position.set(-hw+1.2,0.4,-hd*0.15);cable1.rotation.z=Math.PI/4;g.add(cable1);
-      const cable2=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.6,8),mcolor('#555',{roughness:0.3}));
-      cable2.position.set(-hw+3.5,0.35,-hd*0.15);cable2.rotation.z=-Math.PI/3;g.add(cable2);
-    }else if(id==='cfo'){
-      [[-3.5,-hd*0.2],[-0.5,-hd*0.2],[2.5,hd*0.35]].forEach(([ox,oz])=>{
-        deskTop(g,ox,oz,1.55,0.82);deskLegs(g,ox,oz,1.55);
-        if(ox!==3){
-          const mon=new THREE.Mesh(new THREE.BoxGeometry(0.52,0.34,0.05),
-            new THREE.MeshStandardMaterial({color:'#2a2824',roughness:0.16,metalness:0.4}));
-          mon.position.set(ox,0.99,oz+0.1);g.add(mon);
-        }
-      });
-      const safe=new THREE.Mesh(new THREE.BoxGeometry(0.45,0.5,0.42),
-        new THREE.MeshStandardMaterial({color:'#5a5248',roughness:0.25,metalness:0.6}));
-      safe.position.set(-hw+0.5,0.28,hd-0.4);safe.castShadow=true;g.add(safe);
-      const dial=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.03,16),
-        new THREE.MeshStandardMaterial({color:'#c8b898',roughness:0.15,metalness:0.7}));
-      dial.position.set(-hw+0.5,0.48,hd-0.2);dial.rotation.x=Math.PI/2;g.add(dial);
-      createPrinter(g,hw-0.7,-hd+0.7,0);
-      createFilingCabinet(g,-hw+0.8,hd-0.7,Math.PI);
-      createPlant(g,-hw+0.8,-hd+0.8);
-    }else if(id==='cmo'){
-      for(let i=0;i<7;i++){
-        const oz=-hd+1.5+i*2.85;
-        deskTop(g,0,oz,1.5,0.75);deskLegs(g,0,oz,1.5,0.72);
-        const mon=new THREE.Mesh(new THREE.BoxGeometry(0.54,0.36,0.05),
-          new THREE.MeshStandardMaterial({color:'#2a2824',roughness:0.16,metalness:0.4}));
-        mon.position.set(0.35,0.99,oz);g.add(mon);
-      }
-      const board=new THREE.Mesh(new THREE.BoxGeometry(1.8,0.06,5),MATS.deskDark);
-      board.position.set(0,0.78,hd*0.5);board.castShadow=true;board.receiveShadow=true;g.add(board);
-      createPrinter(g,0,-hd+0.8,0);
-      createPlant(g,0,hd-1.5,1.1);
+      createDeskLamp(g,-0.2,-hd*0.15+0.15,Math.PI/4);
+      createPendantLamp(g,-0.2,0,-hd*0.15);
+      createTreasureChest(g,-hw+0.5,hd-0.5,0,0.9);
+      createShellJar(g,hw-0.5,-hd+0.6,0,0.85);
+      createShellJar(g,hw-0.5,-hd+1.2,0,0.8);
+      createWickerBasket(g,-hw+0.7,-hd+0.6,0,0.8);
+      createCoastalPlant(g,-hw+0.7,-hd+0.7,0.8);
+      const compass=torus(0.1,0.02,MATS.brass,16);compass.position.set(hw-0.5,0.82,hd-0.35);g.add(compass);
+      const compassFace=cyl(0.09,0.09,0.02,mcolor('#f8f0e0'),16);compassFace.position.set(hw-0.5,0.82,hd-0.33);g.add(compassFace);
     }
 
     g.position.set(cx,0,cz);scene.add(g);
@@ -919,19 +1138,42 @@ function addFurniture(){
 
 function createAtrium(){
   const g=new THREE.Group();
-  createBench(g,8.5,9.5,-Math.PI/2);createBench(g,21,9.5,Math.PI/2);
-  createBench(g,11,11,Math.PI);createBench(g,19,11,Math.PI);
-  createPlant(g,9,9.5,1);createPlant(g,20,9.5,1);
-  createPlant(g,14.5,8.5,1);createPlant(g,14.5,11.5,1);
+  // 入户区（西北角，CRO门外）
+  createCoastalPlant(g,1,5,1.2);
+  createShellJar(g,2.5,5,0,0.8);
 
-  const waterCooler=new THREE.Group();
-  const wBody=new THREE.Mesh(new THREE.BoxGeometry(0.35,0.7,0.35),mcolor('#e0dcd4',{roughness:0.28,metalness:0.05}));
-  wBody.position.y=0.55;waterCooler.add(wBody);
-  const bottle=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.15,0.5,24),
-    new THREE.MeshPhysicalMaterial({color:'#c8e0e8',roughness:0.04,metalness:0,transparent:true,opacity:0.4}));
-  bottle.position.y=1.1;waterCooler.add(bottle);
-  waterCooler.position.set(8.5,0,12);waterCooler.castShadow=true;waterCooler.receiveShadow=true;
-  g.add(waterCooler);
+  // 东走廊（CMO与CPO之间，x=18, z=5~13）
+  createCoastalBench(g,18.2,6,-Math.PI/2);
+  createCoastalBench(g,18.2,12,Math.PI/2);
+  createCoastalPlant(g,18.4,7,1);
+  createCoastalPlant(g,18.4,11,1);
+  createShellJar(g,18.4,9,Math.PI/2,0.9);
+
+  // 南露台（CTO与CFO之间，x=8~16, z=13~18）
+  createCoastalBench(g,9,16.5,-Math.PI/2);
+  createCoastalBench(g,15,16.5,Math.PI/2);
+  createCoastalPlant(g,10,14,1);
+  createCoastalPlant(g,12,14,1.2);
+  createCoastalPlant(g,14,14,1);
+  createShellJar(g,9,17.5,0,1.0);
+  createShellJar(g,15,17.5,0,1.0);
+  createShellFountain(g,12,16.5);
+  createRopeCoil(g,10,0.1,17,0,0.25);
+  createRopeCoil(g,14,0.1,17,0,0.25);
+
+  // 西露台（建筑外侧，x=-4~0, z=5~13）
+  createCoastalBench(g,-1,7,-Math.PI/2);
+  createCoastalBench(g,-1,11,Math.PI/2);
+  createCoastalPlant(g,-2,6,1.1);
+  createCoastalPlant(g,-2,12,1.1);
+  createShellJar(g,-2,9,0,0.9);
+  createRopeCoil(g,-1,0.1,8,0,0.2);
+  createRopeCoil(g,-1,0.1,10,0,0.2);
+
+  // CMO开放区内点缀（中央横厅装饰）
+  createRopeCoil(g,4,0.1,9,0,0.2);
+  createRopeCoil(g,14,0.1,9,0,0.2);
+
   g.position.set(0,0,0);scene.add(g);
 }
 
@@ -998,7 +1240,7 @@ function buildMemWall(zone){
   const dispW=style==='whiteboard'?Math.min(2.6,zone.w*0.62):Math.min(3.0,zone.w*0.72);
   const dispH=dispW*(H/W);
   const g=new THREE.Group();
-  const frameMat=new THREE.MeshStandardMaterial({color:'#2a2622',roughness:0.4,metalness:0.3,emissive:new THREE.Color(zone.color),emissiveIntensity:0.12});
+  const frameMat=mcolor('#2a2622',{emissive:new THREE.Color(zone.color),emissiveIntensity:0.12});
   const frame=new THREE.Mesh(new THREE.BoxGeometry(dispW+0.14,dispH+0.14,0.06),frameMat);g.add(frame);
   const pMat=new THREE.MeshBasicMaterial({map:tex,transparent:true});const screen=new THREE.Mesh(new THREE.PlaneGeometry(dispW,dispH),pMat);screen.position.z=0.04;g.add(screen);
   let x=zone.cx,y=1.5,z,rotY;
@@ -1028,10 +1270,10 @@ function buildMemWall(zone){
     else {z=zone.cz-hd+0.16;rotY=0;}
     if(style==='projection'){
       const pj=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.22,0.5),mcolor('#3a3632',{roughness:0.3,metalness:0.4}));pj.position.set(0,2.45,0.55);g.add(pj);
-      const lens=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.1,16),new THREE.MeshStandardMaterial({color:'#101010',roughness:0.1,metalness:0.6}));lens.rotation.x=Math.PI/2;lens.position.set(0,2.45,0.18);g.add(lens);
+      const lens=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.1,16),mcolor('#101010'));lens.rotation.x=Math.PI/2;lens.position.set(0,2.45,0.18);g.add(lens);
     }else{
       const arm=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.1,0.4),MATS.metalDark);arm.position.set(0,-dispH/2-0.05,-0.22);g.add(arm);
-      const cap=new THREE.Mesh(new THREE.BoxGeometry(dispW+0.2,0.08,0.05),new THREE.MeshStandardMaterial({color:'#1a1a1a',roughness:0.2,metalness:0.5}));cap.position.set(0,dispH/2+0.06,0);g.add(cap);
+      const cap=new THREE.Mesh(new THREE.BoxGeometry(dispW+0.2,0.08,0.05),mcolor('#1a1a1a'));cap.position.set(0,dispH/2+0.06,0);g.add(cap);
     }
   }
   g.position.set(x,y,z);g.rotation.y=rotY;scene.add(g);
