@@ -1,0 +1,297 @@
+<!doctype html><html lang="zh-CN" data-page-node-id="VwHhWie0eBTMqCKX9qzjKJ"><head data-page-node-id="bLuGbXQnMYLHRnoI3YWKuv"><meta charset="utf-8" data-page-node-id="6qusk5iyv7mUL80YvdROih">
+<title>错落非对称办公室平面图 v4</title><style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:22px 18px 60px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:19px;margin:0 0 4px;letter-spacing:.02em}
+header p{margin:0;color:var(--ink2);font-size:12.5px}
+button{background:var(--btn);color:var(--ink);border:1px solid var(--line);border-radius:6px;
+ padding:7px 14px;font-size:12.5px;cursor:pointer}
+button:hover{background:var(--btnh)}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:6px;overflow:auto}
+svg{display:block;width:100%;height:auto}
+.court{fill:var(--court);stroke:var(--courtL);stroke-width:1.2;stroke-dasharray:5 4}
+.garden{fill:var(--garden);stroke:var(--gardenL);stroke-width:1.2;stroke-dasharray:5 4}
+.slit{fill:var(--slit)}
+.pub{fill:var(--pub)}
+.hallring{fill:none;stroke:var(--pubL);stroke-width:2}
+.room{fill-opacity:.20;stroke-opacity:.85;stroke-width:1.6}
+.wall{stroke:var(--wall);stroke-width:5;stroke-linecap:square}
+.gap{fill:var(--sheet)}
+.leaf{stroke:var(--leaf);stroke-width:2.2}
+.swing{fill:none;stroke:var(--leaf);stroke-width:1.1;stroke-dasharray:3 3}
+.entryarrow{stroke:var(--acc);stroke-width:2.4;fill:none}
+.arrowhead{fill:var(--acc);stroke:none}
+.leader{stroke:var(--ink2);stroke-width:1;stroke-dasharray:3 3}
+.desk{fill:var(--furn);stroke:var(--furnL);stroke-width:.8}
+.tb{fill:var(--furn2);stroke:var(--furnL);stroke-width:.9}
+.ch{fill:none;stroke:var(--furnL);stroke-width:.9}
+.chip{fill:var(--chip);stroke:var(--line);stroke-width:.8}
+.rEN{font:700 15px/1 "Segoe UI",sans-serif;fill:var(--ink)}
+.rCN{font:600 11.5px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink)}
+.rSZ{font:400 10.5px/1 "Segoe UI",sans-serif;fill:var(--ink2)}
+.site{font:600 13px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink2)}
+.site2{font:400 10.5px/1 "Segoe UI",sans-serif;fill:var(--ink3)}
+.pub1{font:600 12px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink2)}
+.entry{font:700 12px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--acc)}
+.dim{stroke:var(--ink3);stroke-width:.9}
+.dimtxt{font:600 11.5px/1 "Segoe UI",sans-serif;fill:var(--ink2)}
+.dimnote{font:400 11px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink3)}
+.cmp{fill:none;stroke:var(--line);stroke-width:1}
+.cmpn{fill:var(--ink2)}
+.cmpn2{font:700 10px/1 "Segoe UI",sans-serif;fill:var(--ink2)}
+.sb1{fill:var(--ink2)}.sb2{fill:var(--sheet);stroke:var(--ink2);stroke-width:.8}
+.sb{font:400 10.5px/1 "Segoe UI",sans-serif;fill:var(--ink2)}
+.panel{fill:var(--panel);stroke:var(--line);stroke-width:1}
+.pTitle{font:700 13px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink)}
+.pItem{font:400 11.5px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink2)}
+.pVal{font:600 11.5px/1 "Segoe UI",sans-serif;fill:var(--ink)}
+.pNote{font:400 11px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink3)}
+.pDiv{stroke:var(--line);stroke-width:1}
+.ttl{font:700 20px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink)}
+.sub{font:400 12px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink2)}
+.sub2{font:400 11px/1 "Segoe UI",sans-serif;fill:var(--ink3)}
+body[data-theme="dark"]{--bg:#0f1115;--sheet:#15181d;--panel:#1a1e24;--chip:rgba(22,26,32,.86);
+ --line:#2b3138;--wall:#c9ced6;--ink:#eef1f5;--ink2:#a9b2bd;--ink3:#79828d;--leaf:#e8c07d;
+ --pub:#222933;--pubL:#4a5563;--court:#1b2318;--courtL:#3e5236;--garden:#152018;--gardenL:#33513a;
+ --slit:#101317;--furn:rgba(230,235,242,.20);--furnL:rgba(230,235,242,.34);--furn2:rgba(230,235,242,.28);
+ --acc:#f0a95c;--btn:#1e242c;--btnh:#262d36}
+body[data-theme="light"]{--bg:#f2f3f5;--sheet:#ffffff;--panel:#fafbfc;--chip:rgba(255,255,255,.90);
+ --line:#d7dbe0;--wall:#3a3f46;--ink:#1a1d21;--ink2:#5a6068;--ink3:#878d96;--leaf:#8a6a2f;
+ --pub:#f0f1f3;--pubL:#c3c8cf;--court:#eef3ea;--courtL:#a9bfa0;--garden:#eaf2ea;--gardenL:#9dba9f;
+ --slit:#f6f7f8;--furn:rgba(30,35,42,.14);--furnL:rgba(30,35,42,.30);--furn2:rgba(30,35,42,.22);
+ --acc:#c9761f;--btn:#ffffff;--btnh:#f0f1f3}
+</style></head>
+<body data-theme="dark" data-page-node-id="fBjwbR2cbj0OAf4B2lPgPA"><div class="wrap" data-page-node-id="lwkkKxAD4j8qTe7Bt25rM6">
+<header data-page-node-id="mzFAqomT7Ep8sls4u3yFxz"><div data-page-node-id="8phXsY87d7TRbJ8Zogjskn"><h1 data-page-node-id="FsRWDMiao10lea8rVD901W">错落非对称办公室平面图 · v4</h1>
+<p data-page-node-id="FFbm4CiRRLuSfr9f9US1nA">8 部门 · 蛇形走廊 · 偏心圆厅 · 西北入口前庭 + 东南侧院 · 房间本身仍是矩形，只让体量错落</p></div>
+<button id="tg" data-page-node-id="NIZAdrB7KK3NSaByfIDsAi">切换 浅色 / 深色</button></header>
+<div class="sheet" data-page-node-id="RW7UOvNGvG1yZrEx6qjD7N"><svg viewBox="0 0 1194.0 898.0" xmlns="http://www.w3.org/2000/svg" data-page-node-id="MCJRaR3NxpQGWQvD8NC17a"><g id="site" data-page-node-id="oYp5jTMbjZDKk67KU0ZZpo">
+<rect class="court" x="104.0" y="128.0" width="258.5" height="154.0" data-page-node-id="QBcSTVtjUf4nSRgNtCWYUZ"/>
+<rect class="garden" x="819.0" y="469.0" width="99.0" height="253.0" data-page-node-id="2tz6fTtrrD3KGHYpW4A8wO"/>
+<rect class="slit" x="104.0" y="430.5" width="27.5" height="148.5" data-page-node-id="zVVyCjQxeFCuIHNNkrblBh"/>
+<rect class="slit" x="104.0" y="579.0" width="60.5" height="143.0" data-page-node-id="0EMjtgApA98PPDNBD8TARC"/>
+<rect class="slit" x="912.5" y="364.5" width="5.5" height="104.5" data-page-node-id="NJoO5XjCDvOZ1xduBBf8Nn"/>
+</g>
+<g id="public" data-page-node-id="xpEMhyFyIOKvnc3ZzEsttx">
+<rect class="pub" x="285.5" y="282.0" width="77.0" height="148.5" data-page-node-id="dfFaSxCsHJ4mNkp7S4hy3q"/>
+<rect class="pub" x="307.5" y="430.5" width="77.0" height="148.5" data-page-node-id="5fVCUonQE77axzzPTPV1Su"/>
+<rect class="pub" x="340.5" y="579.0" width="77.0" height="143.0" data-page-node-id="VkDYeAyYEaKS0MHdQnOCeN"/>
+<rect class="pub" x="362.5" y="364.5" width="275.0" height="82.5" data-page-node-id="6Ypde5boPaGzW3CkBACQ5C"/>
+<rect class="pub" x="637.5" y="364.5" width="275.0" height="104.5" data-page-node-id="B2oZDz5362cPrYi4R8jnkK"/>
+<rect class="pub" x="307.5" y="364.5" width="110.0" height="121.0" data-page-node-id="nuQfNFMLbZr4j4R9BXC4TC"/>
+<circle class="pub" cx="362.5" cy="425.0" r="52.2" data-page-node-id="mUpzhwbUN5xrKkNLK3dNrn"/>
+<circle class="hallring" cx="362.5" cy="425.0" r="52.2" data-page-node-id="LGlVmER5ASWwv0qTOjnR9f"/>
+</g>
+<g id="rooms" data-page-node-id="eYLUkjGuxsGiA9wAgIw6ge">
+<rect class="room" x="104.0" y="282.0" width="181.5" height="148.5" style="fill:#6FB98F;stroke:#6FB98F" data-page-node-id="pTW3tzXB1kaN4ZvVZTiyDo"/>
+<rect class="room" x="131.5" y="430.5" width="176.0" height="148.5" style="fill:#9C8AA5;stroke:#9C8AA5" data-page-node-id="6sPnUcB0fWeed9f8rmSBLZ"/>
+<rect class="room" x="164.5" y="579.0" width="176.0" height="143.0" style="fill:#C97B84;stroke:#C97B84" data-page-node-id="qWebcngFwaTADfmjYKuIrF"/>
+<rect class="room" x="362.5" y="227.0" width="170.5" height="137.5" style="fill:#8E7CC3;stroke:#8E7CC3" data-page-node-id="pkPiWbjZ5TVkUA1MvHnUAv"/>
+<rect class="room" x="533.0" y="128.0" width="225.5" height="236.5" style="fill:#E08A5B;stroke:#E08A5B" data-page-node-id="DV4iSpo5W4PguWjCmRQMUz"/>
+<rect class="room" x="758.5" y="172.0" width="159.5" height="192.5" style="fill:#5B8FB9;stroke:#5B8FB9" data-page-node-id="snRJAOmBOEAEB5CJJzWaGS"/>
+<rect class="room" x="417.5" y="447.0" width="220.0" height="214.5" style="fill:#D9A441;stroke:#D9A441" data-page-node-id="yI6preLcnypbhjtMCRqvaN"/>
+<rect class="room" x="637.5" y="469.0" width="181.5" height="181.5" style="fill:#7A8FA6;stroke:#7A8FA6" data-page-node-id="EYut5f1V0Do3WKFQFlHrXk"/>
+</g>
+<g id="furn" data-page-node-id="E84fnqdaIXmpHS7SWDhUAA"><rect class="desk" x="151.0" y="346.4" width="41.2" height="19.8" rx="2" data-page-node-id="NFIlQF8BzRHCHrxy45Hl95"/><rect class="ch" x="165.6" y="364.5" width="12.1" height="12.1" rx="2" data-page-node-id="ahgX9V3hTARPFvMxtP4n55"/><rect class="desk" x="197.2" y="346.4" width="41.2" height="19.8" rx="2" data-page-node-id="RQzbaGnDVi14a95MDsBBKH"/><rect class="ch" x="211.8" y="364.5" width="12.1" height="12.1" rx="2" data-page-node-id="UlhDG9MZPwv5KBWmEQOSFI"/><rect class="tb" x="176.9" y="488.9" width="85.2" height="31.6" rx="3" data-page-node-id="OJmzHPzh6dFubDSDk4YFfL"/><rect class="ch" x="181.8" y="477.4" width="13.2" height="13.2" rx="2" data-page-node-id="R0P2pDli4oX4pYWaq3dKel"/><rect class="ch" x="181.8" y="518.9" width="13.2" height="13.2" rx="2" data-page-node-id="FmXtEqragyfXcH1aqcCIul"/><rect class="ch" x="197.4" y="477.4" width="13.2" height="13.2" rx="2" data-page-node-id="hwU8fFv3sYXRrJWEeG72iR"/><rect class="ch" x="197.4" y="518.9" width="13.2" height="13.2" rx="2" data-page-node-id="U97yvoU3FvRx98tza0kbAD"/><rect class="ch" x="212.9" y="477.4" width="13.2" height="13.2" rx="2" data-page-node-id="y9CftQvWzwSblPGZKYiVPA"/><rect class="ch" x="212.9" y="518.9" width="13.2" height="13.2" rx="2" data-page-node-id="e1JZsIxLVpYyBujICRqE3G"/><rect class="ch" x="228.4" y="477.4" width="13.2" height="13.2" rx="2" data-page-node-id="qpnVdGSjwDTTfudlHgjDDC"/><rect class="ch" x="228.4" y="518.9" width="13.2" height="13.2" rx="2" data-page-node-id="5M9YaxMSn5dC6QfTXRRbVZ"/><rect class="ch" x="244.0" y="477.4" width="13.2" height="13.2" rx="2" data-page-node-id="zBGQ6u5am2l9eLo1NSkyD1"/><rect class="ch" x="244.0" y="518.9" width="13.2" height="13.2" rx="2" data-page-node-id="OSIjhFkXKpSWoUkjdMLXsq"/><rect class="desk" x="208.8" y="640.6" width="41.2" height="19.8" rx="2" data-page-node-id="R4SYPLQs0WnpwPw3krigOZ"/><rect class="ch" x="223.4" y="658.8" width="12.1" height="12.1" rx="2" data-page-node-id="Oe85CfBMI7WgxV3H5DJetL"/><rect class="desk" x="255.0" y="640.6" width="41.2" height="19.8" rx="2" data-page-node-id="P05xR7fsR4ueRVXGiDOumH"/><rect class="ch" x="269.6" y="658.8" width="12.1" height="12.1" rx="2" data-page-node-id="c5MGCAn1PyY3Px4ZFvdb6m"/><rect class="desk" x="404.0" y="285.9" width="41.2" height="19.8" rx="2" data-page-node-id="rRmy8OXSTEGzqViAFzep3N"/><rect class="ch" x="418.6" y="304.0" width="12.1" height="12.1" rx="2" data-page-node-id="vmFaP5dtSuUUHakn9o1XbQ"/><rect class="desk" x="450.2" y="285.9" width="41.2" height="19.8" rx="2" data-page-node-id="UzG0DtxK93SDrn7L9APOpV"/><rect class="ch" x="464.8" y="304.0" width="12.1" height="12.1" rx="2" data-page-node-id="5D9VVDEZJhGtLCeBBdWNIM"/><rect class="desk" x="578.9" y="170.6" width="41.2" height="19.8" rx="2" data-page-node-id="5xolGaVuF41uePz0OvCaNd"/><rect class="ch" x="593.5" y="188.8" width="12.1" height="12.1" rx="2" data-page-node-id="gzTXCFZuSjBmJ34Egx7fqu"/><rect class="desk" x="625.1" y="170.6" width="41.2" height="19.8" rx="2" data-page-node-id="FGDhFwXkzyH27RfSRCqgVp"/><rect class="ch" x="639.7" y="188.8" width="12.1" height="12.1" rx="2" data-page-node-id="4PQotJ8D2cPiNTWtxaw7cQ"/><rect class="desk" x="671.3" y="170.6" width="41.2" height="19.8" rx="2" data-page-node-id="r7KMZKrtOjq9JHgTv47v5U"/><rect class="ch" x="685.9" y="188.8" width="12.1" height="12.1" rx="2" data-page-node-id="sdeLuCVcJ178gVNar83MuW"/><rect class="desk" x="578.9" y="302.1" width="41.2" height="19.8" rx="2" data-page-node-id="w9GSwsBkF6vXAD7VqnrD5I"/><rect class="ch" x="593.5" y="291.6" width="12.1" height="12.1" rx="2" data-page-node-id="6m0eOIIsjSkjhlqkulOeLv"/><rect class="desk" x="625.1" y="302.1" width="41.2" height="19.8" rx="2" data-page-node-id="K0pjv8Yrr6559dNAwhFXB5"/><rect class="ch" x="639.7" y="291.6" width="12.1" height="12.1" rx="2" data-page-node-id="faO5QMMSr1Z9ztCaDalm1U"/><rect class="desk" x="671.3" y="302.1" width="41.2" height="19.8" rx="2" data-page-node-id="vkOH8dPn3wdO69LZmBhMbl"/><rect class="ch" x="685.9" y="291.6" width="12.1" height="12.1" rx="2" data-page-node-id="dkMcITxpu3gfmIQFw5JMNJ"/><rect class="desk" x="794.5" y="214.6" width="41.2" height="19.8" rx="2" data-page-node-id="peBAISAP3GEzfaqv1yDnEe"/><rect class="ch" x="809.1" y="232.8" width="12.1" height="12.1" rx="2" data-page-node-id="ED14cqij6RGyorN1i5iWbK"/><rect class="desk" x="840.7" y="214.6" width="41.2" height="19.8" rx="2" data-page-node-id="tH49BHJpQdQzEhcYZE540j"/><rect class="ch" x="855.3" y="232.8" width="12.1" height="12.1" rx="2" data-page-node-id="oYcIHaTiMXD4tKXFY6AxuQ"/><rect class="desk" x="794.5" y="302.1" width="41.2" height="19.8" rx="2" data-page-node-id="VVZF2Yz039oSMFcFkod6Tf"/><rect class="ch" x="809.1" y="291.6" width="12.1" height="12.1" rx="2" data-page-node-id="D2dcpmmiNU5R9W1EyUBE21"/><rect class="desk" x="840.7" y="302.1" width="41.2" height="19.8" rx="2" data-page-node-id="o099QfScdiEiEudZhxpKgb"/><rect class="ch" x="855.3" y="291.6" width="12.1" height="12.1" rx="2" data-page-node-id="fVHbXVQm7cNJxhPCmdYCbq"/><rect class="desk" x="460.7" y="489.6" width="41.2" height="19.8" rx="2" data-page-node-id="8cXkT0MT1Yyyq6QVF1hqfQ"/><rect class="ch" x="475.2" y="507.8" width="12.1" height="12.1" rx="2" data-page-node-id="cFF6ZMwKtq5rM1VAbIAcSA"/><rect class="desk" x="506.9" y="489.6" width="41.2" height="19.8" rx="2" data-page-node-id="URIGapjfeCp6jhEIsWHhBe"/><rect class="ch" x="521.4" y="507.8" width="12.1" height="12.1" rx="2" data-page-node-id="qT9RHUFXxzJa9wkWBwE0A7"/><rect class="desk" x="553.1" y="489.6" width="41.2" height="19.8" rx="2" data-page-node-id="a6cM8DAyzgUcIdcRxTVKkB"/><rect class="ch" x="567.6" y="507.8" width="12.1" height="12.1" rx="2" data-page-node-id="TEEodFfkmBHJ9YOyON9Z0h"/><rect class="desk" x="460.7" y="599.1" width="41.2" height="19.8" rx="2" data-page-node-id="oz91afVGfFX3PfojhOumaq"/><rect class="ch" x="475.2" y="588.6" width="12.1" height="12.1" rx="2" data-page-node-id="rPf9uYSOU8l8P04MjFlcqO"/><rect class="desk" x="506.9" y="599.1" width="41.2" height="19.8" rx="2" data-page-node-id="BADLpWsSwpVL9ZdDQcQrH3"/><rect class="ch" x="521.4" y="588.6" width="12.1" height="12.1" rx="2" data-page-node-id="8a0l42jOdU3ZeFKxAIEKFE"/><rect class="desk" x="553.1" y="599.1" width="41.2" height="19.8" rx="2" data-page-node-id="C1ZNtTpB9rL830jxYX6OgX"/><rect class="ch" x="567.6" y="588.6" width="12.1" height="12.1" rx="2" data-page-node-id="UBcxq8wsfpFWMMhMNEFBNz"/><rect class="desk" x="684.5" y="511.6" width="41.2" height="19.8" rx="2" data-page-node-id="csx4NtAFJqKal3ZBkLLTCc"/><rect class="ch" x="699.1" y="529.8" width="12.1" height="12.1" rx="2" data-page-node-id="ZxyVyOdtmrVLQE5j6zpIwT"/><rect class="desk" x="730.7" y="511.6" width="41.2" height="19.8" rx="2" data-page-node-id="zZ1NAGVL1o7TyO19qBea7N"/><rect class="ch" x="745.3" y="529.8" width="12.1" height="12.1" rx="2" data-page-node-id="jjzlaY6JzXmD84uBUqiYGG"/><rect class="desk" x="684.5" y="588.1" width="41.2" height="19.8" rx="2" data-page-node-id="NNpRFT13Or5BFTRRKaHb5c"/><rect class="ch" x="699.1" y="577.6" width="12.1" height="12.1" rx="2" data-page-node-id="Bx7bMcHMLXvIOVR3CytVeH"/><rect class="desk" x="730.7" y="588.1" width="41.2" height="19.8" rx="2" data-page-node-id="rfhbH5eSpipcjzKKtFu1DZ"/><rect class="ch" x="745.3" y="577.6" width="12.1" height="12.1" rx="2" data-page-node-id="OqYpepHtvxrLBoSP0358uH"/></g>
+<g id="walls" data-page-node-id="Z4fiZgJHdfkc5i1mjBxsok">
+<line class="wall" x1="533.0" y1="128.0" x2="758.5" y2="128.0" data-page-node-id="HDtc1r7s8tsLTh394S2YxH"/>
+<line class="wall" x1="758.5" y1="172.0" x2="918.0" y2="172.0" data-page-node-id="vtz4HAP0lawBFZXwkzNari"/>
+<line class="wall" x1="362.5" y1="227.0" x2="533.0" y2="227.0" data-page-node-id="Qv8bK55smanBiarl7BNyj8"/>
+<line class="wall" x1="104.0" y1="282.0" x2="362.5" y2="282.0" data-page-node-id="girNAEvO7AkS6AJmNUQHK3"/>
+<line class="wall" x1="912.5" y1="364.5" x2="918.0" y2="364.5" data-page-node-id="3BGUj3EVRC6CxgvOD3pD2n"/>
+<line class="wall" x1="104.0" y1="430.5" x2="131.5" y2="430.5" data-page-node-id="xr5rdeVcAq6tlAX0vGJGqE"/>
+<line class="wall" x1="819.0" y1="469.0" x2="912.5" y2="469.0" data-page-node-id="IuOblqstdA9rLR7pKxJXNa"/>
+<line class="wall" x1="384.5" y1="485.5" x2="417.5" y2="485.5" data-page-node-id="gPJofjyRrgpsO5lznYhitU"/>
+<line class="wall" x1="131.5" y1="579.0" x2="164.5" y2="579.0" data-page-node-id="j7fTrJ9CG0xNr5vBEko0TA"/>
+<line class="wall" x1="384.5" y1="579.0" x2="417.5" y2="579.0" data-page-node-id="CRKcBl8PKFsLa8oG2vL9q8"/>
+<line class="wall" x1="637.5" y1="650.5" x2="819.0" y2="650.5" data-page-node-id="6uOxU8cdHkk3q4z4Ggvi9P"/>
+<line class="wall" x1="417.5" y1="661.5" x2="637.5" y2="661.5" data-page-node-id="jn2EC4Rd9ytgvS5zrBnEnR"/>
+<line class="wall" x1="164.5" y1="722.0" x2="417.5" y2="722.0" data-page-node-id="LENQD7aHBWtq8UZ4RKVaob"/>
+<line class="wall" x1="533.0" y1="128.0" x2="533.0" y2="227.0" data-page-node-id="6z5SvJ0LQxOE6h1BHgHs88"/>
+<line class="wall" x1="758.5" y1="128.0" x2="758.5" y2="172.0" data-page-node-id="7EE2aA7xBwrb1DTR2BL4so"/>
+<line class="wall" x1="918.0" y1="172.0" x2="918.0" y2="364.5" data-page-node-id="EGRc8S05NQ4XMqdC5q9RjS"/>
+<line class="wall" x1="362.5" y1="227.0" x2="362.5" y2="282.0" data-page-node-id="sGNjqUrNzySGfY0XP74Lq4"/>
+<line class="wall" x1="104.0" y1="282.0" x2="104.0" y2="430.5" data-page-node-id="ShZFs6CKgWt5SU9q5GfoVI"/>
+<line class="wall" x1="912.5" y1="364.5" x2="912.5" y2="469.0" data-page-node-id="WWvZz5UPGRYuAA7Pr8cw9I"/>
+<line class="wall" x1="131.5" y1="430.5" x2="131.5" y2="579.0" data-page-node-id="SM2VS1UU8RECR5LhyBFweV"/>
+<line class="wall" x1="819.0" y1="469.0" x2="819.0" y2="650.5" data-page-node-id="7LOuGqfyuWnkEAq0AnIJ6G"/>
+<line class="wall" x1="384.5" y1="485.5" x2="384.5" y2="579.0" data-page-node-id="97fGDIUWvK5QYFqqDeEcdJ"/>
+<line class="wall" x1="417.5" y1="485.5" x2="417.5" y2="579.0" data-page-node-id="XpURVZQDhhtvdrrCGeoz7c"/>
+<line class="wall" x1="417.5" y1="661.5" x2="417.5" y2="722.0" data-page-node-id="qOmvHsFgcTN5ny6mDhKOLj"/>
+<line class="wall" x1="164.5" y1="579.0" x2="164.5" y2="722.0" data-page-node-id="CswJqTeSKQBkIpvGfUNhzu"/>
+<line class="wall" x1="637.5" y1="650.5" x2="637.5" y2="661.5" data-page-node-id="5CqIE8AbgJk6CGH4lx00GM"/>
+</g>
+<g id="doors" data-page-node-id="ZDrqFCGIFgCsYzEhVBCTBY">
+<rect class="gap" x="282.0" y="334.2" width="7" height="27.5" data-page-node-id="HrwaZ02hVWLfvvHIFaQSar"/>
+<line class="leaf" x1="285.5" y1="334.2" x2="258.0" y2="334.2" data-page-node-id="R0OaQgKGL1qKpHHiOOj5Hh"/>
+<path class="swing" d="M285.5,361.8 A27.5,27.5 0 0 1 258.0,334.2" data-page-node-id="nd1VoFdtNzeUSXy2H93QcR"/>
+<rect class="gap" x="304.0" y="488.2" width="7" height="27.5" data-page-node-id="NAys2u08sVkEHwbWx2Pcss"/>
+<line class="leaf" x1="307.5" y1="488.2" x2="280.0" y2="488.2" data-page-node-id="plqhR80ognwGGBqjZFezor"/>
+<path class="swing" d="M307.5,515.8 A27.5,27.5 0 0 1 280.0,488.2" data-page-node-id="phvTu60rFSeI3LXLQ03b6s"/>
+<rect class="gap" x="337.0" y="636.8" width="7" height="27.5" data-page-node-id="9V1tike7xCMXGghSV09nAW"/>
+<line class="leaf" x1="340.5" y1="636.8" x2="313.0" y2="636.8" data-page-node-id="utVbpFXiyEKwEDJxEBLo2V"/>
+<path class="swing" d="M340.5,664.2 A27.5,27.5 0 0 1 313.0,636.8" data-page-node-id="Aa3tYls2IO4glKqKZqOAbD"/>
+<rect class="gap" x="436.8" y="361.0" width="27.5" height="7" data-page-node-id="RL7lMMUtl76fR8u6WSPLqt"/>
+<line class="leaf" x1="436.8" y1="364.5" x2="436.8" y2="337.0" data-page-node-id="noQFDZwFXvQFPXl34aE7oi"/>
+<path class="swing" d="M464.2,364.5 A27.5,27.5 0 0 1 436.8,337.0" data-page-node-id="Y5cyXA5ASoCDYKvNGCwWUu"/>
+<rect class="gap" x="574.2" y="361.0" width="27.5" height="7" data-page-node-id="3i2F2owU16zlFQIc6DGmvx"/>
+<line class="leaf" x1="574.2" y1="364.5" x2="574.2" y2="337.0" data-page-node-id="9a1lYFsLEqjIJDZbGXpECM"/>
+<path class="swing" d="M601.8,364.5 A27.5,27.5 0 0 1 574.2,337.0" data-page-node-id="g9AGACNVnfybdFR4CSrRLT"/>
+<rect class="gap" x="816.2" y="361.0" width="27.5" height="7" data-page-node-id="YktalZ8FOtXP4jVzblwF7k"/>
+<line class="leaf" x1="816.2" y1="364.5" x2="816.2" y2="337.0" data-page-node-id="Kat8Av7XyXB7OCN2zvXMGk"/>
+<path class="swing" d="M843.8,364.5 A27.5,27.5 0 0 1 816.2,337.0" data-page-node-id="PARAGWELMpZ1ElRutlo8s2"/>
+<rect class="gap" x="508.2" y="443.5" width="27.5" height="7" data-page-node-id="zj9GCrxVYIhAvxNvU1aPKB"/>
+<line class="leaf" x1="508.2" y1="447.0" x2="508.2" y2="474.5" data-page-node-id="FWICgGj2c26tAWKLOOoW34"/>
+<path class="swing" d="M535.8,447.0 A27.5,27.5 0 0 0 508.2,474.5" data-page-node-id="6Grsw5ipADBEG8GelUGE6r"/>
+<rect class="gap" x="711.8" y="465.5" width="27.5" height="7" data-page-node-id="EMouF874x8WDTcfnSawRh1"/>
+<line class="leaf" x1="711.8" y1="469.0" x2="711.8" y2="496.5" data-page-node-id="ehsHGVQmCEn8vRKvU4xcY5"/>
+<path class="swing" d="M739.2,469.0 A27.5,27.5 0 0 0 711.8,496.5" data-page-node-id="TcUQWVCqLrZCeyYyPdvEPp"/>
+<rect class="gap" x="299.2" y="278.0" width="49.5" height="8" data-page-node-id="oIDSH7FsPlGwZFUHgkZCCP"/>
+<path class="entryarrow" d="M324.0,183.0 L324.0,257.2" data-page-node-id="dT94vy8Be6cd3TX9QZgGvG"/>
+<path class="arrowhead" d="M324.0,276.5 L316.9,251.8 L331.1,251.8 Z" data-page-node-id="Mx3E5JPiOIQhUFY8MaLprp"/>
+</g>
+<g id="lobbyfurn" data-page-node-id="POyb9sYaqI2OilRKs4pim0">
+<circle class="tb" cx="362.5" cy="425.0" r="22.5" data-page-node-id="UtHPhyOUhVuKOgoOpfHMke"/>
+<rect class="ch" x="383.5" y="446.0" width="14.3" height="14.3" rx="2" data-page-node-id="7xGoySznbdhONK9zCQULKy"/>
+<rect class="ch" x="327.2" y="446.0" width="14.3" height="14.3" rx="2" data-page-node-id="2BffWTfAsFUhSQsUH6QBEX"/>
+<rect class="ch" x="327.2" y="389.7" width="14.3" height="14.3" rx="2" data-page-node-id="yG3jijRoOsVE71WgHA1s0Z"/>
+<rect class="ch" x="383.5" y="389.7" width="14.3" height="14.3" rx="2" data-page-node-id="SDmB9AxQV7kSCIDqT9UUQo"/>
+<rect class="tb" x="311.6" y="464.9" width="48.1" height="13.8" rx="2" data-page-node-id="MTUljI6DaQ8wOOLREJ7yk1"/>
+<text class="pub1" x="335.6" y="474.5" text-anchor="middle" data-page-node-id="xZXFh6AuEY8DSqapg16ioR">接待台</text>
+</g>
+<g id="labels" data-page-node-id="3AC7GR4sEk65tIEJj5nbI4">
+<rect class="chip" x="117.8" y="294.4" width="154.0" height="68.8" rx="4" data-page-node-id="hW1RJw8lH97VEKdALQlOtV"/>
+<text class="rEN" x="127.4" y="312.8" data-page-node-id="DG4nZTY5zsBHm6Z9VWM3Jd">CPO</text>
+<text class="rCN" x="127.4" y="329.3" data-page-node-id="0SgkHHdS9iPcRdpGsHKz3S">产品设计室</text>
+<text class="rSZ" x="127.4" y="346.6" data-page-node-id="DtCWB3mhzkrDFW8qHx2DDq">6.6×5.4m · 35.6㎡</text>
+<rect class="chip" x="145.2" y="442.9" width="148.5" height="68.8" rx="4" data-page-node-id="tB8iqGjvCzGrjXe1GZYLuW"/>
+<text class="rEN" x="154.9" y="461.3" data-page-node-id="d595AmelSgYbW1FprTyvsG">MT</text>
+<text class="rCN" x="154.9" y="477.8" data-page-node-id="FqmZE8nSptnLBZmAVcDJzx">战略会议室</text>
+<text class="rSZ" x="154.9" y="495.1" data-page-node-id="8TFmMDCYcIdRLFklIXxUxM">6.4×5.4m · 34.6㎡</text>
+<rect class="chip" x="178.2" y="591.4" width="148.5" height="68.8" rx="4" data-page-node-id="FdhpM4vp4pXF7UFga7IzmN"/>
+<text class="rEN" x="187.9" y="609.8" data-page-node-id="iQASxtwthKJZczQKDwQCHF">CFO</text>
+<text class="rCN" x="187.9" y="626.3" data-page-node-id="L2yCcKentH9XHggBJm5NuG">财务中心</text>
+<text class="rSZ" x="187.9" y="643.6" data-page-node-id="Rsvch3OtLLGzqc4ZqWuli8">6.4×5.2m · 33.3㎡</text>
+<rect class="chip" x="376.2" y="239.4" width="143.0" height="68.8" rx="4" data-page-node-id="rNvG53v47PUKyYCG2SAGDG"/>
+<text class="rEN" x="385.9" y="257.8" data-page-node-id="Nxfk8VxyH3LuXXkibOymfr">CRO</text>
+<text class="rCN" x="385.9" y="274.3" data-page-node-id="NFBIW45vfJHKIIiFgW5Fap">风控中心</text>
+<text class="rSZ" x="385.9" y="291.6" data-page-node-id="bmZ7my4go1D3fcqLz8sHGU">6.2×5.0m · 31.0㎡</text>
+<rect class="chip" x="546.8" y="140.4" width="176.0" height="68.8" rx="4" data-page-node-id="mjt2QFWBGbKh8xdDSwF4Jn"/>
+<text class="rEN" x="556.4" y="158.8" data-page-node-id="zFqboMwovUpVbpgRvB6PSA">CMO</text>
+<text class="rCN" x="556.4" y="175.3" data-page-node-id="to7HBBtcce1NBqEKaOyOJv">营销中心</text>
+<text class="rSZ" x="556.4" y="192.6" data-page-node-id="DML9SBwtqPmanXRcPU4khn">8.2×8.6m · 70.5㎡</text>
+<rect class="chip" x="772.2" y="184.4" width="132.0" height="68.8" rx="4" data-page-node-id="ReXPvthvPKGrOjbiud2GRD"/>
+<text class="rEN" x="781.9" y="202.8" data-page-node-id="mIEGNBXW6iORgeQRvQhH0M">CTO</text>
+<text class="rCN" x="781.9" y="219.3" data-page-node-id="vkYwz04ob12s13fsrmjBxV">技术中心</text>
+<text class="rSZ" x="781.9" y="236.6" data-page-node-id="OdSwKqD7fLpExN2bXb4vlI">5.8×7.0m · 40.6㎡</text>
+<rect class="chip" x="431.2" y="459.4" width="176.0" height="68.8" rx="4" data-page-node-id="v0bBkXsMF5zFVu4jpSOPUT"/>
+<text class="rEN" x="440.9" y="477.8" data-page-node-id="5i9OOlg2VnhTL3QhdZJc0s">COO</text>
+<text class="rCN" x="440.9" y="494.3" data-page-node-id="RHl1tkwQEXpG6xVw6RLjSK">运营中心</text>
+<text class="rSZ" x="440.9" y="511.6" data-page-node-id="UjPtQOtwH77KwL8ADgyH0i">8.0×7.8m · 62.4㎡</text>
+<rect class="chip" x="651.2" y="481.4" width="154.0" height="68.8" rx="4" data-page-node-id="TOkqEi96VSzUT0rfLFs4d9"/>
+<text class="rEN" x="660.9" y="499.8" data-page-node-id="r6iqec50PzjXfXVlkkL9eP">CEO</text>
+<text class="rCN" x="660.9" y="516.3" data-page-node-id="9GSC1DstoXGLtkXhiosGmM">战略办公室</text>
+<text class="rSZ" x="660.9" y="533.6" data-page-node-id="aEZDClBLXDpHwMkKBcccHA">6.6×6.6m · 43.6㎡</text>
+</g>
+<g id="notes" data-page-node-id="wp5SABWJDr9xXpqlREejHh">
+<text class="site" x="233.2" y="199.5" data-page-node-id="a7tDfiS2YHdDWf6MzDi970">入口前庭</text>
+<text class="site2" x="233.2" y="224.2" data-page-node-id="i8bT3ETKQnhBQBSY6LBzzd">9.4×5.6m</text>
+<text class="site" transform="rotate(-90 868.5 595.5)" x="868.5" y="595.5" data-page-node-id="iICJcyKRBDGNj9gFLFdyAn">东南侧院 3.6×9.2m</text>
+<text class="pub1" x="505.5" y="407.1" data-page-node-id="y8IrK8fQA1ySkm65nAzhDo">东西主廊</text>
+<text class="pub1" x="346.0" y="559.8" text-anchor="middle" data-page-node-id="OiDmOhDEfh2m2EFB72OZ8Z">蛇形支廊</text>
+<line class="leader" x1="362.5" y1="477.3" x2="362.5" y2="491.0" data-page-node-id="FDMzq1C8eH7GQB8fwo9eCy"/>
+<text class="pub1" x="362.5" y="507.5" text-anchor="middle" data-page-node-id="r1Fz78dnFiN84fjSEGvAj9">中央接待厅 Ø3.8m</text>
+<text class="entry" x="324.0" y="163.8" text-anchor="middle" data-page-node-id="rswOjI7sdfiKx1IlN2ozee">主入口</text>
+<path class="entryarrow" d="M912.5,416.8 L942.8,416.8" data-page-node-id="tAtB0B0tb84c3YnRTaVX0d"/>
+<path class="arrowhead" d="M964.8,416.8 L937.2,407.9 L937.2,425.6 Z" data-page-node-id="HaVgpw5ahhRFCnLPvDl2oV"/>
+<text class="entry" x="835.5" y="488.2" data-page-node-id="K3mEHEx3fysGII7zbAUijj">次出口·疏散口</text>
+</g>
+<g id="dims" data-page-node-id="FD9WCWGYsQ1vfUcdWCeXLg">
+<line class="dim" x1="104.0" y1="98.0" x2="918.0" y2="98.0" data-page-node-id="61yBhaLtdBYYtPbNiMqbge"/>
+<line class="dim" x1="72.0" y1="128.0" x2="72.0" y2="722.0" data-page-node-id="WL5M367Z5XJEWlL8sLJyfl"/>
+<line class="dim" x1="104.0" y1="92.0" x2="104.0" y2="104.0" data-page-node-id="om6h8GKj9eBAtjHsMoq2Dv"/>
+<line class="dim" x1="918.0" y1="92.0" x2="918.0" y2="104.0" data-page-node-id="vreJEHBi3uiKHt3J85ZKoT"/>
+<line class="dim" x1="66.0" y1="128.0" x2="78.0" y2="128.0" data-page-node-id="qVvKZenaGL4CUFt2Tw6EPP"/>
+<line class="dim" x1="66.0" y1="722.0" x2="78.0" y2="722.0" data-page-node-id="srXyJtSkMFqADaQA0pYkZX"/>
+<text class="dimtxt" x="511.0" y="92.0" text-anchor="middle" data-page-node-id="sJw9D1GVt6RHDFIkoCiYb7">29.6 m</text>
+<text class="dimtxt" transform="rotate(-90 64.0 425.0)" x="64.0" y="425.0" text-anchor="middle" data-page-node-id="yc5bDWiOVJPRhhK3zB02xC">21.6 m</text>
+<text class="dimnote" x="104.0" y="76.0" data-page-node-id="fQrFjuSog1rkQdiwbpXU8A">北墙四道退台（自西向东）：CPO 5.6 · CRO 3.6 · CTO 1.6 · CMO 0.0 m</text>
+</g>
+<g id="compass" data-page-node-id="1HtDQECXx6NB8XjIdOoWPL">
+<circle class="cmp" cx="884.0" cy="66.0" r="19" data-page-node-id="o62oxJMOzFUEKAyKmrxgA5"/>
+<path class="cmpn" d="M884.0,51.0 L878.0,74.0 L890.0,74.0 Z" data-page-node-id="0w0w4xIlBTXczBY9xTdXxq"/>
+<text class="cmpn2" x="884.0" y="88.0" text-anchor="middle" data-page-node-id="YCvMOF6KQohR3zkQIbVxhQ">N</text>
+<g id="scalebar" data-page-node-id="YYkDmqQkkymbudyBww761f">
+<rect class="sb1" x="104.0" y="852.0" width="55.0" height="9" data-page-node-id="BAdbNsewpIU4w5oWYFJTND"/>
+<rect class="sb2" x="159.0" y="852.0" width="55.0" height="9" data-page-node-id="ZvAU6zJ5pHkDaw3uxlafEN"/>
+<rect class="sb1" x="214.0" y="852.0" width="55.0" height="9" data-page-node-id="p3oRFHFEGAZAJwMNDhijid"/>
+<rect class="sb2" x="269.0" y="852.0" width="55.0" height="9" data-page-node-id="OSPuyDV5dLwShaudndX6il"/>
+<rect class="sb1" x="324.0" y="852.0" width="55.0" height="9" data-page-node-id="5b0guGJ0fDup4jlam1M5cc"/>
+<text class="sb" x="100.0" y="876.0" data-page-node-id="drGfc0VWh9eoJF4ZB0UcSX">0</text>
+<text class="sb" x="241.5" y="876.0" text-anchor="middle" data-page-node-id="sUOia13EVWdmtGwqbmBDO7">5</text>
+<text class="sb" x="385.0" y="876.0" text-anchor="end" data-page-node-id="BFZGamQ8z5pCtTBZnGwG2h">10 m</text>
+</g></g>
+<g id="panel" data-page-node-id="VJJNybFDDf3DcTuKJMA7yD">
+<rect class="panel" x="964.0" y="66.0" width="210" height="654.0" rx="8" data-page-node-id="pv7O3vQBgJh9XAq00MeuEI"/>
+<text class="pTitle" x="976.0" y="90.0" data-page-node-id="5oPEyV56Upg3GJWu4o5eQ4">部门面积</text>
+<rect x="976.0" y="105.0" width="11" height="11" rx="2" style="fill:#6FB98F" data-page-node-id="AwIYQ4CqBRhZLRkg72MZU0"/>
+<text class="pItem" x="994.0" y="114.0" data-page-node-id="FOLzZXR4CY25hwBoFYCfsn">CPO 产品设计室</text>
+<text class="pVal" x="1162.0" y="114.0" text-anchor="end" data-page-node-id="AHSfw8gwMlTaCBLzoRMYEg">35.6㎡</text>
+<rect x="976.0" y="129.0" width="11" height="11" rx="2" style="fill:#9C8AA5" data-page-node-id="AeAf8PgvH8HemyEzpzbxj6"/>
+<text class="pItem" x="994.0" y="138.0" data-page-node-id="A11PVnwBvFYddc3eSDiVKd">MT 战略会议室</text>
+<text class="pVal" x="1162.0" y="138.0" text-anchor="end" data-page-node-id="nLMou4LrHFHlgyJ1Cz5Hdc">34.6㎡</text>
+<rect x="976.0" y="153.0" width="11" height="11" rx="2" style="fill:#C97B84" data-page-node-id="8i4YWMHBmB83dJupk9sbhS"/>
+<text class="pItem" x="994.0" y="162.0" data-page-node-id="toFdPDLwu8GgNzuDlsYlHE">CFO 财务中心</text>
+<text class="pVal" x="1162.0" y="162.0" text-anchor="end" data-page-node-id="9rrBPzlRRm9tuh3ZEZumK3">33.3㎡</text>
+<rect x="976.0" y="177.0" width="11" height="11" rx="2" style="fill:#8E7CC3" data-page-node-id="4DijJUX0KqJ5RZOfoOpFua"/>
+<text class="pItem" x="994.0" y="186.0" data-page-node-id="JDHXykIfGhhcMpFlMF5QjG">CRO 风控中心</text>
+<text class="pVal" x="1162.0" y="186.0" text-anchor="end" data-page-node-id="f3kK4yHLHMtLrVEPf9ORKx">31.0㎡</text>
+<rect x="976.0" y="201.0" width="11" height="11" rx="2" style="fill:#E08A5B" data-page-node-id="zdaM8pUTMYy694vg99fhh5"/>
+<text class="pItem" x="994.0" y="210.0" data-page-node-id="BwwWDl3NU5S5DC2MR0qB5b">CMO 营销中心</text>
+<text class="pVal" x="1162.0" y="210.0" text-anchor="end" data-page-node-id="rNqgSGQFXCJj89kApAfW3t">70.5㎡</text>
+<rect x="976.0" y="225.0" width="11" height="11" rx="2" style="fill:#5B8FB9" data-page-node-id="5hHQQYfYUBFoRkTnvZ8vQe"/>
+<text class="pItem" x="994.0" y="234.0" data-page-node-id="LNMSa47PpC4c8dM4mRktGt">CTO 技术中心</text>
+<text class="pVal" x="1162.0" y="234.0" text-anchor="end" data-page-node-id="RmA5ZmwSQTFzEhC46yvaSK">40.6㎡</text>
+<rect x="976.0" y="249.0" width="11" height="11" rx="2" style="fill:#D9A441" data-page-node-id="zz1fIKlUi3Jumvelwg7LmX"/>
+<text class="pItem" x="994.0" y="258.0" data-page-node-id="i3nFpNmHZXRhvspC9PnjrG">COO 运营中心</text>
+<text class="pVal" x="1162.0" y="258.0" text-anchor="end" data-page-node-id="fcVEKquVMRUWiEf1dkfh2F">62.4㎡</text>
+<rect x="976.0" y="273.0" width="11" height="11" rx="2" style="fill:#7A8FA6" data-page-node-id="kWlXpGOwG6pjcaoGMvQ5n7"/>
+<text class="pItem" x="994.0" y="282.0" data-page-node-id="yvZyTini0XqBEJWsDubUMB">CEO 战略办公室</text>
+<text class="pVal" x="1162.0" y="282.0" text-anchor="end" data-page-node-id="CZSGKbmseWu7ueBd1EViTS">43.6㎡</text>
+<line class="pDiv" x1="976.0" y1="302.0" x2="1162.0" y2="302.0" data-page-node-id="WSLhLtyXIkYH4BdeAaxnKF"/>
+<text class="pItem" x="976.0" y="314.0" data-page-node-id="OMJSM5dSTNwR1Z71AK8QKS">公共空间（走廊+枢纽+圆厅）</text>
+<text class="pVal" x="1162.0" y="314.0" text-anchor="end" data-page-node-id="huOMfIuI0V3bC8Iqj2a5Nr">114.0㎡</text>
+<text class="pItem" x="976.0" y="336.0" data-page-node-id="FXxWtP6VCqzZFInAsEVfoF">室内合计</text>
+<text class="pVal" x="1162.0" y="336.0" text-anchor="end" data-page-node-id="MVSaRgZj2mE7KeK9lCGA0E">465.6㎡</text>
+<text class="pItem" x="976.0" y="358.0" data-page-node-id="bnoFD4b4tIFryBNC4roEz5">外轮廓占地（包络 639.4㎡）</text>
+<text class="pVal" x="1162.0" y="358.0" text-anchor="end" data-page-node-id="QGANEBVALAS4ac4qIRlENF">465.6㎡</text>
+<text class="pItem" x="976.0" y="380.0" data-page-node-id="FA1vi0WmFy889Q4mc178nm">公共占比 / 覆盖率</text>
+<text class="pVal" x="1162.0" y="380.0" text-anchor="end" data-page-node-id="iqxCtGZCgS2MGZujlRP01z">24.5% / 72.8%</text>
+<text class="pTitle" x="976.0" y="412.0" data-page-node-id="EJazyyImpK52XEH0AgLSy4">为什么不对称</text>
+<text class="pNote" x="976.0" y="432.0" data-page-node-id="rx4w454dGR90BWIg7ypHa7">① 西翼三间逐层东退 0 → 1.0 → 2.2m，西立</text>
+<text class="pNote" x="976.0" y="450.0" data-page-node-id="lmouYCArK7JSTXNR5kAhxD">   面是台阶不是直墙；北带只占东半，北墙</text>
+<text class="pNote" x="976.0" y="468.0" data-page-node-id="b6Q9RhCJEYAfB3XK6c6RbC">   退台 5.6 / 3.6 / 1.6 / 0.0m；</text>
+<text class="pNote" x="976.0" y="486.0" data-page-node-id="IYO9I5ikU3mAfxSkNLWGAs">② 西北让出 52.6㎡ 入口前庭，东南留</text>
+<text class="pNote" x="976.0" y="504.0" data-page-node-id="69yG9SlDXuhK8JEQjqkyYL">   33.1㎡ 侧院 —— 两个空白对角分布；</text>
+<text class="pNote" x="976.0" y="522.0" data-page-node-id="SOi1bGEfbYufVN2G8GfHEi">③ 走廊是蛇形：A1→A2→A3 逐段东移</text>
+<text class="pNote" x="976.0" y="540.0" data-page-node-id="0rRBBdtdOCqiUpVoA928Fv">   0.8~1.2m，无一条贯通到底的长直廊；</text>
+<text class="pNote" x="976.0" y="558.0" data-page-node-id="CAF3yIkqFlbHCGsf7PJcYq">④ 圆厅偏心 x=9.4（包络中心 x=14.8），</text>
+<text class="pNote" x="976.0" y="576.0" data-page-node-id="Fi3c2gloj3unmVBdB4HGVv">   不在任何中轴上；房间面宽进深全不等。</text>
+<text class="pTitle" x="976.0" y="602.0" data-page-node-id="l3xNnhxCITxqLnAVbYPCrd">退台数据（脚本实测）</text>
+<text class="pNote" x="976.0" y="622.0" data-page-node-id="sjWnri1O0FVmwJzO4elmCO">北墙（西→东）：5.6 / 3.6 / 1.6 / 0.0 m</text>
+<text class="pNote" x="976.0" y="640.0" data-page-node-id="tPcHzCAksIM384IojQEtZq">南墙（西→东）：21.6 / 19.4 / 19.0 m</text>
+<text class="pNote" x="976.0" y="658.0" data-page-node-id="bbGe3PAzx8AbR44pbEjBNG">西墙（北→南）：0.0 / 1.0 / 2.2 m</text>
+<text class="pNote" x="976.0" y="676.0" data-page-node-id="YVNfpPg0ZaaSZG9bmk2rAM">房间面宽 5.8~8.2m · 进深 5.0~8.6m 全不相等</text>
+</g>
+<g id="title" data-page-node-id="FGcWUhhlZTNq3y3FfoWPwy">
+<text class="ttl" x="104.0" y="776.0" data-page-node-id="xE12eMuXZ2WtW0vHrCyJeW">错落非对称办公室平面图 · v4</text>
+<text class="sub" x="104.0" y="798.0" data-page-node-id="aDolKiLdKoQeCdaAqX6thj">8 部门 · 单体均为矩形房间 · 体量组合刻意不设左右/上下镜像轴</text>
+<text class="sub" x="104.0" y="816.0" data-page-node-id="T1lWDnj5K158C9thDmymQy">包络 29.6×21.6m · 房间 351.6㎡ · 公共 114.0㎡ · 室内 465.6㎡ · 8 樘门全部朝公共廊</text>
+<text class="sub2" x="104.0" y="834.0" data-page-node-id="JA2P6JlVkrHsLcBlqiOPyE">几何校验：_verify/gen_plan_v4_geom.py（重叠 0 · 门 8/8 通向公共廊 · 房间级镜像自洽 1/8）</text>
+</g></svg></div>
+</div><script>
+var b=document.body,t=document.getElementById('tg');
+t.onclick=function(){b.dataset.theme=b.dataset.theme==='dark'?'light':'dark';};
+</script></body></html>

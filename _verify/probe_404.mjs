@@ -1,0 +1,12 @@
+import { chromium } from './node_modules/playwright/index.mjs';
+const BASE = 'http://127.0.0.1:8934/office-3d-taskboard.html';
+const browser = await chromium.launch({ headless: true, executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe' });
+const page = await browser.newPage({ viewport: { width: 1000, height: 700 } });
+const bad = [];
+page.on('response', r => { if (r.status() >= 400) bad.push(`${r.status()}  ${r.url()}`); });
+page.on('requestfailed', r => bad.push(`FAIL  ${r.url()}  ${r.failure()?.errorText}`));
+await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(13000);
+console.log('=== 失败请求 ===');
+console.log(bad.length ? [...new Set(bad)].join('\n') : '  无');
+await browser.close();

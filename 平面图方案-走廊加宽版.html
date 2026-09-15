@@ -1,0 +1,384 @@
+<!doctype html><html lang="zh-CN" data-page-node-id="3DMn5g4BVEpFJg1DqFbJGi"><head data-page-node-id="lyao7wZgoXebAlayRdYPNv"><meta charset="utf-8" data-page-node-id="Wizb5FUxKVSDUSAMDeM4zL">
+<title>走廊加宽 · 过道清障方案 v5</title><style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1250px;margin:0 auto;padding:22px 18px 60px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:19px;margin:0 0 4px;letter-spacing:.02em}
+header p{margin:0;color:var(--ink2);font-size:12.5px}
+button{background:var(--btn);color:var(--ink);border:1px solid var(--line);border-radius:6px;
+ padding:7px 14px;font-size:12.5px;cursor:pointer}
+button:hover{background:var(--btnh)}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:6px;overflow:auto}
+svg{display:block;width:100%;height:auto}
+.env{fill:var(--env)}
+.court{fill:var(--court);stroke:var(--courtL);stroke-width:1.2;stroke-dasharray:5 4}
+.garden{fill:var(--garden);stroke:var(--gardenL);stroke-width:1.2;stroke-dasharray:5 4}
+.slit{fill:var(--slit)}
+.tree{fill:var(--tree);stroke:var(--treeL);stroke-width:1}
+.pub{fill:var(--pub)}
+.hallfloor{fill:var(--hall)}
+.hallring{fill:none;stroke:var(--pubL);stroke-width:2.4}
+.hallring2{fill:none;stroke:var(--pubL);stroke-width:1.2;stroke-dasharray:4 4}
+.clearmark{fill:none;stroke:var(--ok);stroke-width:2.6;stroke-linecap:round}
+.v4ln{stroke:var(--v4);stroke-width:2.4;stroke-dasharray:9 6}
+.v4circ{fill:none;stroke:var(--v4);stroke-width:2;stroke-dasharray:8 6}
+.v4void{fill:var(--v4f);stroke:var(--v4);stroke-width:1;stroke-dasharray:3 3}
+.pub3{font:400 10.5px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink3)}
+.clrC{fill:var(--clrbg);stroke:var(--clr);stroke-width:1.8}
+.clrN{font:700 10px/1 "Segoe UI",sans-serif;fill:var(--clrtx)}
+.clrC2{fill:var(--clrbg);stroke:var(--clr);stroke-width:1.4}
+.clrN2{font:700 9px/1 "Segoe UI",sans-serif;fill:var(--clrtx)}
+.room{fill-opacity:.20;stroke-opacity:.85;stroke-width:1.6}
+.wall{stroke:var(--wall);stroke-width:5;stroke-linecap:square}
+.gap{fill:var(--sheet)}
+.leaf{stroke:var(--leaf);stroke-width:2.2}
+.swing{fill:none;stroke:var(--leaf);stroke-width:1.1;stroke-dasharray:3 3}
+.entryarrow{stroke:var(--acc);stroke-width:2.4;fill:none}
+.arrowhead{fill:var(--acc);stroke:none}
+.leader{stroke:var(--ink2);stroke-width:1;stroke-dasharray:3 3}
+.desk{fill:var(--furn);stroke:var(--furnL);stroke-width:.8}
+.tb{fill:var(--furn2);stroke:var(--furnL);stroke-width:.9}
+.ch{fill:none;stroke:var(--furnL);stroke-width:.9}
+.chip{fill:var(--chip);stroke:var(--line);stroke-width:.8}
+.rEN{font:700 15px/1 "Segoe UI",sans-serif;fill:var(--ink)}
+.rCN{font:600 11.5px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink)}
+.rSZ{font:400 10.5px/1 "Segoe UI",sans-serif;fill:var(--ink2)}
+.site{font:600 13px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink2)}
+.site2{font:400 10.5px/1 "Segoe UI",sans-serif;fill:var(--ink3)}
+.pub1{font:600 12px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink2)}
+.pub1b{font:700 12.5px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ok)}
+.pub2{font:700 10.5px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ok)}
+.entry{font:700 12px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--acc)}
+.dim{stroke:var(--ink3);stroke-width:.9}
+.dimw{stroke:var(--ok);stroke-width:1.4}
+.dimtxt{font:600 11.5px/1 "Segoe UI",sans-serif;fill:var(--ink2)}
+.dimwt2{font:700 10.5px/1 "Segoe UI",sans-serif;fill:var(--ok)}
+.dimnote{font:400 11px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink3)}
+.wtag{fill:var(--okbg);stroke:var(--ok);stroke-width:1}
+.wtagt{font:700 11.5px/1 "Segoe UI",sans-serif;fill:var(--oktx)}
+.cmp{fill:none;stroke:var(--line);stroke-width:1}
+.cmpn{fill:var(--ink2)}
+.cmpn2{font:700 10px/1 "Segoe UI",sans-serif;fill:var(--ink2)}
+.sb1{fill:var(--ink2)}.sb2{fill:var(--sheet);stroke:var(--ink2);stroke-width:.8}
+.sb{font:400 10.5px/1 "Segoe UI",sans-serif;fill:var(--ink2)}
+.panel{fill:var(--panel);stroke:var(--line);stroke-width:1}
+.pTitle{font:700 13px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink)}
+.pItem{font:400 11.5px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink2)}
+.pVal{font:600 11.5px/1 "Segoe UI",sans-serif;fill:var(--ink)}
+.pOld{font:600 11.5px/1 "Segoe UI",sans-serif;fill:var(--ink3)}
+.pNew{font:700 11.5px/1 "Segoe UI",sans-serif;fill:var(--ok)}
+.pNote{font:400 11px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink3)}
+.pNote2{font:400 10.5px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink3)}
+.pDiv{stroke:var(--line);stroke-width:1}
+.ttl{font:700 20px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink)}
+.sub{font:400 12px/1 "PingFang SC","Microsoft YaHei",sans-serif;fill:var(--ink2)}
+.sub2{font:400 11px/1 "Segoe UI",sans-serif;fill:var(--ink3)}
+body[data-theme="dark"]{--bg:#0f1115;--sheet:#15181d;--panel:#1a1e24;--chip:rgba(22,26,32,.86);
+ --line:#2b3138;--wall:#c9ced6;--ink:#eef1f5;--ink2:#a9b2bd;--ink3:#79828d;--leaf:#e8c07d;
+ --pub:#222933;--pubL:#4a5563;--hall:#2b3442;--env:#101318;--slit:#101317;
+ --court:#1b2318;--courtL:#3e5236;--garden:#152018;--gardenL:#33513a;
+ --tree:#24331f;--treeL:#3e5a35;
+ --furn:rgba(230,235,242,.20);--furnL:rgba(230,235,242,.34);--furn2:rgba(230,235,242,.28);
+ --acc:#f0a95c;--ok:#5fd39a;--okbg:rgba(95,211,154,.12);--oktx:#8ee7ba;--btn:#1e242c;--btnh:#262d36;
+ --v4:#e0736a;--v4f:rgba(224,115,106,.10);--clr:#ff8a72;--clrbg:rgba(255,138,114,.16);--clrtx:#ffb9a6}
+body[data-theme="light"]{--bg:#f2f3f5;--sheet:#ffffff;--panel:#fafbfc;--chip:rgba(255,255,255,.90);
+ --line:#d7dbe0;--wall:#3a3f46;--ink:#1a1d21;--ink2:#5a6068;--ink3:#878d96;--leaf:#8a6a2f;
+ --pub:#eef0f2;--pubL:#c3c8cf;--hall:#e6ebef;--env:#f6f7f8;--slit:#f6f7f8;
+ --court:#eef3ea;--courtL:#a9bfa0;--garden:#eaf2ea;--gardenL:#9dba9f;
+ --tree:#d8ead0;--treeL:#a9c79c;
+ --furn:rgba(30,35,42,.14);--furnL:rgba(30,35,42,.30);--furn2:rgba(30,35,42,.22);
+ --acc:#c9761f;--ok:#1a8f5a;--okbg:rgba(26,143,90,.10);--oktx:#116b42;--btn:#ffffff;--btnh:#f0f1f3;
+ --v4:#c0483c;--v4f:rgba(192,72,60,.10);--clr:#d0442c;--clrbg:rgba(208,68,44,.10);--clrtx:#a8321e}
+</style></head>
+<body data-theme="dark" data-page-node-id="DRAp9HPDwlrxO8orGpviDN"><div class="wrap" data-page-node-id="3AtPDOMrIgwHCjwpS3C6N7">
+<header data-page-node-id="bgKunXXsQsDiGJ4rt1HCsf"><div data-page-node-id="4Z37DdxIH1FbtlejxdrCow"><h1 data-page-node-id="GImCJWX44phz63phSOLk5m">走廊加宽 · 过道清障方案 · v5</h1>
+<p data-page-node-id="WnyXNkFSOI9apcs76j9w4R">在 v4 布局上只改室内交通：清空走廊/圆厅家具 + 主廊净宽 3.0→4.2m + 西支廊加宽并消除死区</p></div>
+<button id="tg" data-page-node-id="RrFClnxmiVNnZBIyCl9YwR">切换 浅色 / 深色</button></header>
+<div class="sheet" data-page-node-id="9LmPpdU0CzZ1EoTnYZScdc"><svg viewBox="0 0 1214.0 954.0" xmlns="http://www.w3.org/2000/svg" data-page-node-id="hBrIzHAYNIoMKHqYNG9VHO"><g id="site" data-page-node-id="3GzLSny4eH0T5D5ZBWiQiB">
+<rect class="env" x="104.0" y="150.0" width="814.0" height="594.0" data-page-node-id="Gu9tN4HKTHkCSl1EjmEAPb"/>
+<rect class="slit" x="285.5" y="150.0" width="77.0" height="154.0" data-page-node-id="ZCGphlItPOxHlNk9oA2Laf"/>
+<rect class="slit" x="362.5" y="150.0" width="170.5" height="99.0" data-page-node-id="0OHsQBDZNXgHjlR1n69f7i"/>
+<rect class="slit" x="758.5" y="150.0" width="159.5" height="44.0" data-page-node-id="MbAEeBhmAltScBz221MJQK"/>
+<rect class="slit" x="912.5" y="375.5" width="5.5" height="115.5" data-page-node-id="TSfjas6IUNst7yVLDll6qy"/>
+<rect class="court" x="104.0" y="150.0" width="181.5" height="154.0" data-page-node-id="sv8wDjazpa7MjoHeOtdbG7"/>
+<rect class="garden" x="824.5" y="496.5" width="93.5" height="176.0" data-page-node-id="1zpcsMqS7W6Hbw7IVPmDD2"/>
+<circle class="tree" cx="150.8" cy="181.6" r="24.8" data-page-node-id="aVHQL6fjFsSwG650UF4SLc"/>
+<circle class="tree" cx="150.8" cy="233.9" r="24.8" data-page-node-id="zxaHI1nPwKWJSp14rAqPj5"/>
+<circle class="tree" cx="205.8" cy="207.8" r="15.1" data-page-node-id="AcNAPGbktV0LOX17Xrs8Cx"/>
+<circle class="tree" cx="847.9" cy="546.0" r="22.0" data-page-node-id="JJA1KrQ0NMZ2pTYQJJw4T2"/>
+<circle class="tree" cx="847.9" cy="628.5" r="22.0" data-page-node-id="HErZGm2e2dffjLYgT1ygG7"/>
+</g>
+<g id="public" data-page-node-id="CmJdktVB2wOQrYlZJoNncG">
+<rect class="pub" x="285.5" y="304.0" width="77.0" height="71.5" data-page-node-id="CiNBUGiGZ9RmC6taWhcn9J"/>
+<rect class="pub" x="285.5" y="375.5" width="627.0" height="77.0" data-page-node-id="iFzXtUOuaTd2vQwGbbJ3oY"/>
+<rect class="pub" x="307.5" y="452.5" width="605.0" height="38.5" data-page-node-id="HXLrCSdrguFyrn0qBgAQnD"/>
+<rect class="pub" x="307.5" y="491.0" width="110.0" height="110.0" data-page-node-id="9OgL0WXPnHnxOX5UvAkKQG"/>
+<rect class="pub" x="340.5" y="601.0" width="77.0" height="143.0" data-page-node-id="0xpVtbz93Q1ZrsKA0gtcXz"/>
+<circle class="hallfloor" cx="362.5" cy="447.0" r="41.2" data-page-node-id="wy1kqsOL7q4Zgncwij0H5k"/>
+<circle class="hallring" cx="362.5" cy="447.0" r="41.2" data-page-node-id="ZfuA4J12b469FNHC1180A6"/>
+<circle class="hallring2" cx="362.5" cy="447.0" r="18.6" data-page-node-id="ae5MWdiDRB1kSrDYDshpE9"/>
+<path class="clearmark" d="M382.3,466.8 l-5,-5 m5,5 l5,-5 m-5,5 l0,-8" data-page-node-id="w1CEnk0wLqd0RhQWElRvTC"/>
+<path class="clearmark" d="M342.7,466.8 l-5,-5 m5,5 l5,-5 m-5,5 l0,-8" data-page-node-id="KAGCwQctyOX8uzDznpzBbM"/>
+<path class="clearmark" d="M342.7,427.2 l-5,-5 m5,5 l5,-5 m-5,5 l0,-8" data-page-node-id="SUjpW0lKfhzDaDZdCtQp5X"/>
+<path class="clearmark" d="M382.3,427.2 l-5,-5 m5,5 l5,-5 m-5,5 l0,-8" data-page-node-id="oCreEpn5tyvrrQcNi1pBzw"/>
+</g>
+<g id="v4ref" data-page-node-id="nX2eEv9lZIgi0fbV2EjXNd">
+<line class="v4ln" x1="362.5" y1="386.5" x2="912.5" y2="386.5" data-page-node-id="B7t6yWo7Ur0R2QAAQw0tAv"/>
+<line class="v4ln" x1="307.5" y1="469.0" x2="637.5" y2="469.0" data-page-node-id="PZELpjvx9ofZBQgl2C9XqY"/>
+<line class="v4ln" x1="384.5" y1="469.0" x2="384.5" y2="744.0" data-page-node-id="Daz531gPBoQ1RowpcHbYHe"/>
+<circle class="v4circ" cx="362.5" cy="447.0" r="52.2" data-page-node-id="JEG51pexCuxytAG7v5bAS8"/>
+<rect class="v4void" x="384.5" y="507.5" width="33.0" height="176.0" data-page-node-id="cVyD3PrkfFFWCnvqafhDkK"/>
+</g>
+<g id="rooms" data-page-node-id="DoFPHrIAjroJUbn6UfCLG5">
+<rect class="room" x="104.0" y="304.0" width="181.5" height="148.5" style="fill:#6FB98F;stroke:#6FB98F" data-page-node-id="JoxUlX9qNFkwqkl0nFWPSZ"/>
+<rect class="room" x="131.5" y="452.5" width="176.0" height="148.5" style="fill:#9C8AA5;stroke:#9C8AA5" data-page-node-id="x2aAi7jCCkee51JC6dJ9Mg"/>
+<rect class="room" x="164.5" y="601.0" width="176.0" height="143.0" style="fill:#C97B84;stroke:#C97B84" data-page-node-id="P1b5qBDoAJmXqIOma394gG"/>
+<rect class="room" x="362.5" y="249.0" width="170.5" height="126.5" style="fill:#8E7CC3;stroke:#8E7CC3" data-page-node-id="9OoXqg6TLWqstvL5mHcLUu"/>
+<rect class="room" x="533.0" y="150.0" width="225.5" height="225.5" style="fill:#E08A5B;stroke:#E08A5B" data-page-node-id="uNWDdrzVTxJuDJ55h7Rr9C"/>
+<rect class="room" x="758.5" y="194.0" width="159.5" height="181.5" style="fill:#5B8FB9;stroke:#5B8FB9" data-page-node-id="SJSqAlRxFLfK2EoBzG9wzg"/>
+<rect class="room" x="417.5" y="491.0" width="220.0" height="192.5" style="fill:#D9A441;stroke:#D9A441" data-page-node-id="0VEadVawcF6PQNuxVJMABD"/>
+<rect class="room" x="637.5" y="491.0" width="181.5" height="181.5" style="fill:#7A8FA6;stroke:#7A8FA6" data-page-node-id="b3PDFkq0iJAlgPzDPIhI03"/>
+</g>
+<g id="furn" data-page-node-id="tyBEGLjY3SsxGyC8gBgw5c"><rect class="desk" x="151.0" y="368.4" width="41.2" height="19.8" rx="2" data-page-node-id="2TfGRtAUUsYDJE5FGXO6cx"/><rect class="ch" x="165.6" y="386.5" width="12.1" height="12.1" rx="2" data-page-node-id="LAmH5TmE7MNDEf0ebaC1Z5"/><rect class="desk" x="197.2" y="368.4" width="41.2" height="19.8" rx="2" data-page-node-id="SKBax6AshVIysaW05rWxsP"/><rect class="ch" x="211.8" y="386.5" width="12.1" height="12.1" rx="2" data-page-node-id="g4jFNyrcwznMrihPBGruij"/><rect class="tb" x="176.9" y="510.9" width="85.2" height="31.6" rx="3" data-page-node-id="HfQxwjmbjb1yYLVj39HKBQ"/><rect class="ch" x="181.8" y="499.4" width="13.2" height="13.2" rx="2" data-page-node-id="HuZ6ZXufNFw0uapjamSKgd"/><rect class="ch" x="181.8" y="540.9" width="13.2" height="13.2" rx="2" data-page-node-id="0uizpTMnSlFuxjCdXXALZR"/><rect class="ch" x="197.4" y="499.4" width="13.2" height="13.2" rx="2" data-page-node-id="xXwsYrxDyjDHXt4QNMF61F"/><rect class="ch" x="197.4" y="540.9" width="13.2" height="13.2" rx="2" data-page-node-id="OzBpHRVJM6o1IRUslJ52IZ"/><rect class="ch" x="212.9" y="499.4" width="13.2" height="13.2" rx="2" data-page-node-id="3UsCYh38L9j2kbGW4VOcNr"/><rect class="ch" x="212.9" y="540.9" width="13.2" height="13.2" rx="2" data-page-node-id="TgBHFRhs1FTHrYMDQoYy8y"/><rect class="ch" x="228.4" y="499.4" width="13.2" height="13.2" rx="2" data-page-node-id="7NwRrP9QxJiDCHArnrQ2Jb"/><rect class="ch" x="228.4" y="540.9" width="13.2" height="13.2" rx="2" data-page-node-id="XrSOc87yEaAOuB7uTEFUyT"/><rect class="ch" x="244.0" y="499.4" width="13.2" height="13.2" rx="2" data-page-node-id="hWl9ZIMH5AXVNAEQG0DYWV"/><rect class="ch" x="244.0" y="540.9" width="13.2" height="13.2" rx="2" data-page-node-id="ej3v2cQUPTOqo4nwIY89kz"/><rect class="desk" x="208.8" y="662.6" width="41.2" height="19.8" rx="2" data-page-node-id="4RBX0p4Z3tDGfaBAM3IQCP"/><rect class="ch" x="223.4" y="680.8" width="12.1" height="12.1" rx="2" data-page-node-id="0E8Dn6HCitSNr5Uf4dUKoo"/><rect class="desk" x="255.0" y="662.6" width="41.2" height="19.8" rx="2" data-page-node-id="DcUoUgLRFMbmeQc6fBkE9O"/><rect class="ch" x="269.6" y="680.8" width="12.1" height="12.1" rx="2" data-page-node-id="V1MW8qPyMexoxXBCHwXmeG"/><rect class="desk" x="404.0" y="302.3" width="41.2" height="19.8" rx="2" data-page-node-id="rBOwF11cHauV1fQtmHsDkr"/><rect class="ch" x="418.6" y="320.5" width="12.1" height="12.1" rx="2" data-page-node-id="eMkrs2qKm1MYSZ6VeCOIn4"/><rect class="desk" x="450.2" y="302.3" width="41.2" height="19.8" rx="2" data-page-node-id="giq4B65F6q5ijGCBK0Miab"/><rect class="ch" x="464.8" y="320.5" width="12.1" height="12.1" rx="2" data-page-node-id="xid6hFMy6fmAuXXJQbBPBB"/><rect class="desk" x="578.9" y="192.6" width="41.2" height="19.8" rx="2" data-page-node-id="f9ImxWffQZqKsvd3j6MkSZ"/><rect class="ch" x="593.5" y="210.8" width="12.1" height="12.1" rx="2" data-page-node-id="Cqd0Ns0TKCjTjzPFKd8fHl"/><rect class="desk" x="625.1" y="192.6" width="41.2" height="19.8" rx="2" data-page-node-id="cXdEPCW8w0W02XcrKfkDfj"/><rect class="ch" x="639.7" y="210.8" width="12.1" height="12.1" rx="2" data-page-node-id="RZFvjajAo4HAZAwRshHazM"/><rect class="desk" x="671.3" y="192.6" width="41.2" height="19.8" rx="2" data-page-node-id="NIWbKGg5BDXH7ClMzauFEg"/><rect class="ch" x="685.9" y="210.8" width="12.1" height="12.1" rx="2" data-page-node-id="hhJH9wdxeur8ZjxKMlkSp9"/><rect class="desk" x="578.9" y="313.1" width="41.2" height="19.8" rx="2" data-page-node-id="NFyTnZgaBsySdKtUsFmdrJ"/><rect class="ch" x="593.5" y="302.6" width="12.1" height="12.1" rx="2" data-page-node-id="aIWjIBT51F7GI5WnHUjvaP"/><rect class="desk" x="625.1" y="313.1" width="41.2" height="19.8" rx="2" data-page-node-id="3Q4951pgli71kb5HqMnbDD"/><rect class="ch" x="639.7" y="302.6" width="12.1" height="12.1" rx="2" data-page-node-id="YVNSEsA3yboPLbt2bMjRJY"/><rect class="desk" x="671.3" y="313.1" width="41.2" height="19.8" rx="2" data-page-node-id="zzFk8zPimdEl5gxoBP2p8S"/><rect class="ch" x="685.9" y="302.6" width="12.1" height="12.1" rx="2" data-page-node-id="d8y5ONWo5Pi3y117KBeqhx"/><rect class="desk" x="794.5" y="236.6" width="41.2" height="19.8" rx="2" data-page-node-id="8LZXGB5K6A2VeCucpdbwM3"/><rect class="ch" x="809.1" y="254.8" width="12.1" height="12.1" rx="2" data-page-node-id="wo1ZZVsaNVFNB8MDqmpTEj"/><rect class="desk" x="840.7" y="236.6" width="41.2" height="19.8" rx="2" data-page-node-id="fiwn0mW26OcvwAPmHTXEiI"/><rect class="ch" x="855.3" y="254.8" width="12.1" height="12.1" rx="2" data-page-node-id="LHIo5h0rPl4iQMz4KSc9l0"/><rect class="desk" x="794.5" y="313.1" width="41.2" height="19.8" rx="2" data-page-node-id="yDNHup1oWCf2egTmHtTECT"/><rect class="ch" x="809.1" y="302.6" width="12.1" height="12.1" rx="2" data-page-node-id="sd9DlGnhgjKCKldS70npHX"/><rect class="desk" x="840.7" y="313.1" width="41.2" height="19.8" rx="2" data-page-node-id="DHZR5PMMEaucO8ES7VTmTp"/><rect class="ch" x="855.3" y="302.6" width="12.1" height="12.1" rx="2" data-page-node-id="aHFaC0vS1HkbyjMZPnXKiK"/><rect class="desk" x="460.7" y="533.6" width="41.2" height="19.8" rx="2" data-page-node-id="C9KSulDIsGDitKI9VMBaDo"/><rect class="ch" x="475.2" y="551.8" width="12.1" height="12.1" rx="2" data-page-node-id="b48GWQQbpZDJutjHh5YrQh"/><rect class="desk" x="506.9" y="533.6" width="41.2" height="19.8" rx="2" data-page-node-id="d4PJsoLqNW2HtmCVvv3Xks"/><rect class="ch" x="521.4" y="551.8" width="12.1" height="12.1" rx="2" data-page-node-id="wHJzHwPkLcuFBi8vZrdHpN"/><rect class="desk" x="553.1" y="533.6" width="41.2" height="19.8" rx="2" data-page-node-id="dkhAAuuWGGf7xq9AcpctHB"/><rect class="ch" x="567.6" y="551.8" width="12.1" height="12.1" rx="2" data-page-node-id="WsJ6zko0YfEVDK592RGfyR"/><rect class="desk" x="460.7" y="621.1" width="41.2" height="19.8" rx="2" data-page-node-id="s1VBKQ3wRgHKCrHsl9E1nW"/><rect class="ch" x="475.2" y="610.6" width="12.1" height="12.1" rx="2" data-page-node-id="M4i4K57SMYYg5FU5QmiUXO"/><rect class="desk" x="506.9" y="621.1" width="41.2" height="19.8" rx="2" data-page-node-id="jA9YrOzpGu7rfxUF2J7UJI"/><rect class="ch" x="521.4" y="610.6" width="12.1" height="12.1" rx="2" data-page-node-id="itdNNES8DvFYZbMXkIEjZY"/><rect class="desk" x="553.1" y="621.1" width="41.2" height="19.8" rx="2" data-page-node-id="bzom1e9M2wvlG07JHHXcrR"/><rect class="ch" x="567.6" y="610.6" width="12.1" height="12.1" rx="2" data-page-node-id="Y6v5TAQzjCSZfLjS6IGj02"/><rect class="desk" x="684.5" y="533.6" width="41.2" height="19.8" rx="2" data-page-node-id="0FA4vYa9LM6k5U4fsMrcl6"/><rect class="ch" x="699.1" y="551.8" width="12.1" height="12.1" rx="2" data-page-node-id="Cl9VwPVaB3ECB7IEaUoymX"/><rect class="desk" x="730.7" y="533.6" width="41.2" height="19.8" rx="2" data-page-node-id="7HPs3kka10BEgHcN7aUbBm"/><rect class="ch" x="745.3" y="551.8" width="12.1" height="12.1" rx="2" data-page-node-id="JpleeKtXz3nk0DTZMcOFAu"/><rect class="desk" x="684.5" y="610.1" width="41.2" height="19.8" rx="2" data-page-node-id="DWCzIvfZueKcmGReIuN7Ah"/><rect class="ch" x="699.1" y="599.6" width="12.1" height="12.1" rx="2" data-page-node-id="KYnsFoysxIpHGTvBSrP6ct"/><rect class="desk" x="730.7" y="610.1" width="41.2" height="19.8" rx="2" data-page-node-id="nejydpbZytJ2jjykJs1Mz7"/><rect class="ch" x="745.3" y="599.6" width="12.1" height="12.1" rx="2" data-page-node-id="QdbBHqwcwqIVaubWg0MEZd"/></g>
+<g id="walls" data-page-node-id="4kkGxutPbHrYDLErYXRIOW">
+<line class="wall" x1="533.0" y1="150.0" x2="758.5" y2="150.0" data-page-node-id="3DKbrnDvfjOjFBRqR463k6"/>
+<line class="wall" x1="758.5" y1="194.0" x2="918.0" y2="194.0" data-page-node-id="iIq5qyc9GrIWUIO45LX7UA"/>
+<line class="wall" x1="362.5" y1="249.0" x2="533.0" y2="249.0" data-page-node-id="hBh2GUL5bQsLZEFogR4P68"/>
+<line class="wall" x1="104.0" y1="304.0" x2="362.5" y2="304.0" data-page-node-id="aDrwT2FAfG8vtZKQTsElgK"/>
+<line class="wall" x1="912.5" y1="375.5" x2="918.0" y2="375.5" data-page-node-id="k7e6P6BuAxn43xy4HLV5pD"/>
+<line class="wall" x1="104.0" y1="452.5" x2="131.5" y2="452.5" data-page-node-id="GmuPafwUmbwdZmLIBOYga7"/>
+<line class="wall" x1="819.0" y1="491.0" x2="912.5" y2="491.0" data-page-node-id="8q5JUD8TR50vLA1mEcOFII"/>
+<line class="wall" x1="131.5" y1="601.0" x2="164.5" y2="601.0" data-page-node-id="XLdfcn2RXssHTUE491UEMt"/>
+<line class="wall" x1="637.5" y1="672.5" x2="819.0" y2="672.5" data-page-node-id="uxJ3jA8Y8eDsONCJDSlBLo"/>
+<line class="wall" x1="417.5" y1="683.5" x2="637.5" y2="683.5" data-page-node-id="jDdCmERMDA6U92xWQCYJTd"/>
+<line class="wall" x1="164.5" y1="744.0" x2="417.5" y2="744.0" data-page-node-id="rCJW7DFyC8XyiZEDZxYE7d"/>
+<line class="wall" x1="533.0" y1="150.0" x2="533.0" y2="249.0" data-page-node-id="n5ndwkPSNQrjWuAZ23RJ26"/>
+<line class="wall" x1="758.5" y1="150.0" x2="758.5" y2="194.0" data-page-node-id="CPd0NbRngw6rLa8OF70hnW"/>
+<line class="wall" x1="918.0" y1="194.0" x2="918.0" y2="375.5" data-page-node-id="z2CG7GpOqjNHoqHStaZMZE"/>
+<line class="wall" x1="362.5" y1="249.0" x2="362.5" y2="304.0" data-page-node-id="Jf0Smy9VE28h6WbGZhawXu"/>
+<line class="wall" x1="104.0" y1="304.0" x2="104.0" y2="452.5" data-page-node-id="ixXEGiWZCgv40LDJHwARSs"/>
+<line class="wall" x1="912.5" y1="375.5" x2="912.5" y2="491.0" data-page-node-id="J6HxVzTuMRA8v4MaLtidNk"/>
+<line class="wall" x1="131.5" y1="452.5" x2="131.5" y2="601.0" data-page-node-id="0yCZ9bh2WxYEM9h7TVs1gM"/>
+<line class="wall" x1="819.0" y1="491.0" x2="819.0" y2="672.5" data-page-node-id="aRgArL0Yw3tcsgZYPGdFEu"/>
+<line class="wall" x1="164.5" y1="601.0" x2="164.5" y2="744.0" data-page-node-id="xDcDfiM2LzrDikGlXjjjEz"/>
+<line class="wall" x1="637.5" y1="672.5" x2="637.5" y2="683.5" data-page-node-id="D5jmi35VJC6sTUZQUwoDn8"/>
+<line class="wall" x1="417.5" y1="683.5" x2="417.5" y2="744.0" data-page-node-id="8yOSNm9EAPiSY5R8LJHJLN"/>
+</g>
+<g id="doors" data-page-node-id="xA186BNm8EkJeRHe0sHcc8">
+<rect class="gap" x="282.0" y="400.2" width="7" height="27.5" data-page-node-id="xFBg2UYi0JTZ5PKsrDEUDg"/>
+<line class="leaf" x1="285.5" y1="400.2" x2="313.0" y2="400.2" data-page-node-id="sAKG6csRm7q1OJjcMjSsNI"/>
+<path class="swing" d="M285.5,427.8 A27.5,27.5 0 0 0 313.0,400.2" data-page-node-id="TWjWzrE444paSatxhuFZW7"/>
+<rect class="gap" x="304.0" y="510.2" width="7" height="27.5" data-page-node-id="fZJGYUthencWzYLTTGAAkg"/>
+<line class="leaf" x1="307.5" y1="510.2" x2="335.0" y2="510.2" data-page-node-id="ACaAjsgwTn6RXpcFtU4msL"/>
+<path class="swing" d="M307.5,537.8 A27.5,27.5 0 0 0 335.0,510.2" data-page-node-id="9locEau9Hr9cl24B8GJu8G"/>
+<rect class="gap" x="337.0" y="658.8" width="7" height="27.5" data-page-node-id="VGMgn7AaPUr7yLy4vZ4sO2"/>
+<line class="leaf" x1="340.5" y1="658.8" x2="368.0" y2="658.8" data-page-node-id="wVcUYwLKrMzYGf5a4G4xyJ"/>
+<path class="swing" d="M340.5,686.2 A27.5,27.5 0 0 0 368.0,658.8" data-page-node-id="x0L6aAL8nEN2w8kSExQAoO"/>
+<rect class="gap" x="436.8" y="372.0" width="27.5" height="7" data-page-node-id="4sH3tAYAHT9ff8nOn9tg5h"/>
+<line class="leaf" x1="436.8" y1="375.5" x2="436.8" y2="348.0" data-page-node-id="yQgpwA06l354bMAS5wRiko"/>
+<path class="swing" d="M464.2,375.5 A27.5,27.5 0 0 1 436.8,348.0" data-page-node-id="pdgRGad6pad2eetHzDmVf0"/>
+<rect class="gap" x="574.2" y="372.0" width="27.5" height="7" data-page-node-id="EbXvkcDlUe2yHSKQvdBlaX"/>
+<line class="leaf" x1="574.2" y1="375.5" x2="574.2" y2="348.0" data-page-node-id="6ab1HeSyeqfRIeyqpPAxzK"/>
+<path class="swing" d="M601.8,375.5 A27.5,27.5 0 0 1 574.2,348.0" data-page-node-id="6xUeE6X014lUkp9SBiYuuP"/>
+<rect class="gap" x="816.2" y="372.0" width="27.5" height="7" data-page-node-id="gp6iUgZh1Q4IPmMvPnhGoS"/>
+<line class="leaf" x1="816.2" y1="375.5" x2="816.2" y2="348.0" data-page-node-id="0J5oonAnZpBwd3nmDgEEzp"/>
+<path class="swing" d="M843.8,375.5 A27.5,27.5 0 0 1 816.2,348.0" data-page-node-id="EGoB3XACJG8kXuaCCCV7fZ"/>
+<rect class="gap" x="508.2" y="487.5" width="27.5" height="7" data-page-node-id="CDp0xZ6AQYWJDad66p8F7i"/>
+<line class="leaf" x1="508.2" y1="491.0" x2="508.2" y2="518.5" data-page-node-id="DEDGSRVPXvMbcuhAkp7fEz"/>
+<path class="swing" d="M535.8,491.0 A27.5,27.5 0 0 0 508.2,518.5" data-page-node-id="fxH59oMUyk7eCVI4C9dfko"/>
+<rect class="gap" x="711.8" y="487.5" width="27.5" height="7" data-page-node-id="FnbtTmlbomT8ACBRoStndQ"/>
+<line class="leaf" x1="711.8" y1="491.0" x2="711.8" y2="518.5" data-page-node-id="SSxd87O4UmTG6K70IAEEqg"/>
+<path class="swing" d="M739.2,491.0 A27.5,27.5 0 0 0 711.8,518.5" data-page-node-id="JQuTOteyNMyTlx54rrYoDF"/>
+<rect class="gap" x="299.2" y="300.0" width="49.5" height="8" data-page-node-id="vqAU5urG2YECgcjfrdTdde"/>
+<path class="entryarrow" d="M324.0,205.0 L324.0,279.2" data-page-node-id="07BQCyPyuSEYKAjbtd2H1L"/>
+<path class="arrowhead" d="M324.0,298.5 L316.9,273.8 L331.1,273.8 Z" data-page-node-id="PJc8T6i0wn6oNwSNXQDB4g"/>
+</g>
+<g id="clears" data-page-node-id="i5WtZjmG7uGqrRsoQ1nPRv">
+<circle class="clrC" cx="362.5" cy="478.6" r="9" data-page-node-id="EgdqAw656GeJOsFrQ4SQ3n"/>
+<text class="clrN" x="362.5" y="482.6" text-anchor="middle" data-page-node-id="KGG4sCdS0Vg01QZJ5ilL5q">1</text>
+<circle class="clrC" cx="362.5" cy="499.2" r="9" data-page-node-id="EYYrnZBq049n6Xfp0JlKFB"/>
+<text class="clrN" x="362.5" y="503.2" text-anchor="middle" data-page-node-id="zQyA9Sxy80nC4BwbHiqXil">2</text>
+<circle class="clrC" cx="320.7" cy="440.1" r="9" data-page-node-id="lXn5vFBMou40C5qx91cpg6"/>
+<text class="clrN" x="320.7" y="444.1" text-anchor="middle" data-page-node-id="6Wtwwf52OEFxccFPOwtDGU">3</text>
+<circle class="clrC" cx="404.3" cy="440.1" r="9" data-page-node-id="nvG788yC92dj1nHohlGeT3"/>
+<text class="clrN" x="404.3" y="444.1" text-anchor="middle" data-page-node-id="muDtFmFEfWZoegGl6rhiMD">4</text>
+<circle class="clrC" cx="362.5" cy="442.9" r="9" data-page-node-id="s55lNUpZIWiE6OXqgnqFku"/>
+<text class="clrN" x="362.5" y="446.9" text-anchor="middle" data-page-node-id="xdATsbbi5Tg4OyaMjQCPLI">5</text>
+<circle class="clrC" cx="336.4" cy="412.6" r="9" data-page-node-id="cEl29gXXLEvCKudEWpx3cs"/>
+<text class="clrN" x="336.4" y="416.6" text-anchor="middle" data-page-node-id="ui4E9GGlg1WKqeyEKQQrTo">6</text>
+<circle class="clrC" cx="388.6" cy="412.6" r="9" data-page-node-id="3sXrcGJ6LEXGCbavMFBmIY"/>
+<text class="clrN" x="388.6" y="416.6" text-anchor="middle" data-page-node-id="47tWEDRtdeo9hfdd9Xkogg">7</text>
+<circle class="clrC" cx="450.5" cy="427.8" r="9" data-page-node-id="xWa0azY41WuQaSxol5bglW"/>
+<text class="clrN" x="450.5" y="431.8" text-anchor="middle" data-page-node-id="8pwBmRRr7y00gAlTK82IX9">8</text>
+<circle class="clrC" cx="747.5" cy="427.8" r="9" data-page-node-id="nTfpSDZfSTwHRl0tHwaiuC"/>
+<text class="clrN" x="747.5" y="431.8" text-anchor="middle" data-page-node-id="IsRiomjCjhIr9zAVqJTaBt">9</text>
+</g>
+<g id="labels" data-page-node-id="S6JMEj20KceLJXLhRDjfCM">
+<rect class="chip" x="117.8" y="316.4" width="154.0" height="68.8" rx="4" data-page-node-id="7LnCHVwvts8Ucw6mmVvUHe"/>
+<text class="rEN" x="127.4" y="334.8" data-page-node-id="Th9MGzH216jDg05yO4P39J">CPO</text>
+<text class="rCN" x="127.4" y="351.3" data-page-node-id="YqwjcveMFQD1QSyBBnnuM6">产品设计室</text>
+<text class="rSZ" x="127.4" y="368.6" data-page-node-id="8HSA9DmtujSB6Lzx7Jc4UW">6.6×5.4m · 35.6㎡</text>
+<rect class="chip" x="145.2" y="464.9" width="148.5" height="68.8" rx="4" data-page-node-id="zbhTr4YVQB7QFVIE0gu5s1"/>
+<text class="rEN" x="154.9" y="483.3" data-page-node-id="0LQzv7pEWsckMhLOD0zcO7">MT</text>
+<text class="rCN" x="154.9" y="499.8" data-page-node-id="my892x1nhF5GkXPovKL0gX">战略会议室</text>
+<text class="rSZ" x="154.9" y="517.1" data-page-node-id="wXS9bVNrDTB0uWNYrH9iDz">6.4×5.4m · 34.6㎡</text>
+<rect class="chip" x="178.2" y="613.4" width="148.5" height="68.8" rx="4" data-page-node-id="CiXf74YlEZWIdq3CxQppYZ"/>
+<text class="rEN" x="187.9" y="631.8" data-page-node-id="AylQNRBQuIcXA1jOXY7Pvj">CFO</text>
+<text class="rCN" x="187.9" y="648.3" data-page-node-id="1lqBXIpp0Y4oHtCI3ZWafw">财务中心</text>
+<text class="rSZ" x="187.9" y="665.6" data-page-node-id="XEbFieNyUQ6mFjoWFTF8X0">6.4×5.2m · 33.3㎡</text>
+<rect class="chip" x="376.2" y="261.4" width="143.0" height="68.8" rx="4" data-page-node-id="5w2v2GzqdLLWlaiFFGTv7a"/>
+<text class="rEN" x="385.9" y="279.8" data-page-node-id="ANGQYFcC0WIr2aSRCofwFr">CRO</text>
+<text class="rCN" x="385.9" y="296.3" data-page-node-id="ILnUuunxlMh1qnfcvRoA9j">风控中心</text>
+<text class="rSZ" x="385.9" y="313.6" data-page-node-id="tFi0wy8mn1oqulWUFVjMAp">6.2×4.6m · 28.5㎡</text>
+<rect class="chip" x="546.8" y="162.4" width="176.0" height="68.8" rx="4" data-page-node-id="fyd7tnuh3UMdqGtD16tcPu"/>
+<text class="rEN" x="556.4" y="180.8" data-page-node-id="fpvRwXrXEtdcUCTF0RkBEv">CMO</text>
+<text class="rCN" x="556.4" y="197.3" data-page-node-id="nhdp4KvuLhjxXaRyEQrjQR">营销中心</text>
+<text class="rSZ" x="556.4" y="214.6" data-page-node-id="vHBok3DfNEPBhczMJp2kDt">8.2×8.2m · 67.2㎡</text>
+<rect class="chip" x="772.2" y="206.4" width="132.0" height="68.8" rx="4" data-page-node-id="MP7CPFYQIiHrp8BvfNc2IT"/>
+<text class="rEN" x="781.9" y="224.8" data-page-node-id="096Ry3SayBVFa3O6zjz1WR">CTO</text>
+<text class="rCN" x="781.9" y="241.3" data-page-node-id="F8EicY6UoRdnYT8ueEhBvl">技术中心</text>
+<text class="rSZ" x="781.9" y="258.6" data-page-node-id="duke4goPK62ZKwuuLEHOFR">5.8×6.6m · 38.3㎡</text>
+<rect class="chip" x="431.2" y="503.4" width="176.0" height="68.8" rx="4" data-page-node-id="QDljSqx5qDfGimtr0lcYNr"/>
+<text class="rEN" x="440.9" y="521.8" data-page-node-id="XAfzaoJ2CGVxpfU0iyQRf2">COO</text>
+<text class="rCN" x="440.9" y="538.3" data-page-node-id="wTxd0AGxAryTYxKFEMKqpc">运营中心</text>
+<text class="rSZ" x="440.9" y="555.6" data-page-node-id="8PHbP8EiZykqq4Sdb0fV3Q">8.0×7.0m · 56.0㎡</text>
+<rect class="chip" x="651.2" y="503.4" width="154.0" height="68.8" rx="4" data-page-node-id="kWWz3hHS1X11AbH5jpXZXg"/>
+<text class="rEN" x="660.9" y="521.8" data-page-node-id="YJDXnfMTdwxQolrA8ioQCw">CEO</text>
+<text class="rCN" x="660.9" y="538.3" data-page-node-id="sXspOEgzqJ47Ff5YeEqDmc">战略办公室</text>
+<text class="rSZ" x="660.9" y="555.6" data-page-node-id="np8AO35I5kyZ6qcd40KPiW">6.6×6.6m · 43.6㎡</text>
+</g>
+<g id="corrdim" data-page-node-id="U4gO0AfBBLalJG9Yqv2kH7">
+<line class="dimw" x1="489.0" y1="375.5" x2="489.0" y2="491.0" data-page-node-id="UFMfRb1nJayI8MqiY6yC1e"/>
+<line class="dimw" x1="482.1" y1="375.5" x2="495.9" y2="375.5" data-page-node-id="qZTCVu9J7QsJmX89s3RiTz"/>
+<line class="dimw" x1="482.1" y1="491.0" x2="495.9" y2="491.0" data-page-node-id="rnCOFdtfvtujhev4xMr00f"/>
+<rect class="wtag" x="437.2" y="422.2" width="76.0" height="22.0" rx="3" data-page-node-id="IzDpyZwqGPwRnyJ7WLMUwi"/>
+<text class="wtagt" x="441.2" y="437.2" data-page-node-id="NXZMA9TZ0BTCxCoQTG6MZp">净宽 4.2 m</text>
+<line class="dimw" x1="307.5" y1="573.5" x2="417.5" y2="573.5" data-page-node-id="4kclgJADiprGmrpt6wx58H"/>
+<line class="dimw" x1="307.5" y1="566.6" x2="307.5" y2="580.4" data-page-node-id="4JoE7CMB0eMehNE3gNS5Tg"/>
+<line class="dimw" x1="417.5" y1="566.6" x2="417.5" y2="580.4" data-page-node-id="uCsTNF9GNVZBXIsyjHBBSL"/>
+<text class="dimwt2" x="362.5" y="595.5" text-anchor="middle" data-page-node-id="MWsvca7TP0dXJbytfSVZ5l">西支廊 净宽 4.0 m</text>
+<line class="dimw" x1="340.5" y1="705.5" x2="417.5" y2="705.5" data-page-node-id="7Pz8YZFn3ewBjJsidtY466"/>
+<line class="dimw" x1="340.5" y1="698.6" x2="340.5" y2="712.4" data-page-node-id="h8RVzZxJgqP5KQZSkEIMJH"/>
+<line class="dimw" x1="417.5" y1="698.6" x2="417.5" y2="712.4" data-page-node-id="OfGTmwhlNs8dURwmBljlDk"/>
+<text class="dimwt2" x="379.0" y="726.1" text-anchor="middle" data-page-node-id="Hvo7QpRj9cvkzXyDjoAbRh">2.8 m</text>
+</g>
+<g id="notes" data-page-node-id="cXOEW0HpZdEshlSk2icooT">
+<text class="site" x="233.2" y="221.5" text-anchor="start" data-page-node-id="2kHdLexZS7paV6HFtLgMsq">入口前庭</text>
+<text class="site2" x="233.2" y="246.2" text-anchor="start" data-page-node-id="Yr9tXVyZzjxZimB3ekfzb0">6.6×5.6m（室外）</text>
+<text class="site" transform="rotate(-90 887.8 584.5)" x="887.8" y="584.5" text-anchor="middle" data-page-node-id="HLnzf82uRhSK5AufAjxDBp">东南侧院 3.4×6.4m</text>
+<text class="pub1b" x="640.2" y="433.8" text-anchor="middle" data-page-node-id="wsVHkpxljmOMKUCIO6xRTQ">东西主廊 净宽 4.2m</text>
+<line class="leader" x1="362.5" y1="491.0" x2="362.5" y2="502.0" data-page-node-id="AJwGwDsuM5DIJQ5ZT4UKLY"/>
+<text class="pub2" x="362.5" y="521.2" text-anchor="middle" data-page-node-id="UgNh4ZLSwNZJcQmLVYDCeE">接待圆厅 Ø3.0m（已清空）</text>
+<text class="entry" x="324.0" y="185.8" text-anchor="middle" data-page-node-id="OfDiE3pesML37ZX0AshY1n">主入口</text>
+<path class="entryarrow" d="M912.5,438.8 L945.5,438.8" data-page-node-id="KCpREq5VrcCCSiWDQFKq6p"/>
+<path class="arrowhead" d="M967.5,438.8 L940.0,429.9 L940.0,447.6 Z" data-page-node-id="1qT8asCgUA3nrS3glEL6JC"/>
+<text class="entry" x="901.5" y="405.8" text-anchor="end" data-page-node-id="GWRgmhRPMxaX971K7iXnJs">次出口·疏散口</text>
+</g>
+<g id="dims" data-page-node-id="K2X8q7NvgXTZMnNWjHMk3i">
+<line class="dim" x1="104.0" y1="116.0" x2="918.0" y2="116.0" data-page-node-id="xyoTFv1v2uneVH1y5kbxOs"/>
+<line class="dim" x1="70.0" y1="150.0" x2="70.0" y2="744.0" data-page-node-id="zeMj5ck4FFzKipiw4bSR4g"/>
+<line class="dim" x1="104.0" y1="110.0" x2="104.0" y2="122.0" data-page-node-id="07sDuPuLATz7dOBwunpvvk"/>
+<line class="dim" x1="918.0" y1="110.0" x2="918.0" y2="122.0" data-page-node-id="8ZxXxpR4TiVg47ww3FMVQi"/>
+<line class="dim" x1="64.0" y1="150.0" x2="76.0" y2="150.0" data-page-node-id="8cuPLYGXlDEH1R0CzGHeem"/>
+<line class="dim" x1="64.0" y1="744.0" x2="76.0" y2="744.0" data-page-node-id="4sMSnXUH18XfMbpHSTMh5T"/>
+<text class="dimtxt" x="511.0" y="110.0" text-anchor="middle" data-page-node-id="cyEhlDPubRd6oY1EHYi6jB">29.6 m（包络不变）</text>
+<text class="dimtxt" transform="rotate(-90 62.0 447.0)" x="62.0" y="447.0" text-anchor="middle" data-page-node-id="5tjsjOOH18z6fhhyczhgbK">21.6 m（包络不变）</text>
+<text class="dimnote" x="104.0" y="92.0" data-page-node-id="MGhw879pYxuU5i0kzlh3aE">外轮廓 / 退台 / 房间外墙一律不动 —— 只改室内交通：主廊净宽 3.0→4.2m、西支廊 1.6→2.8~4.0m</text>
+</g>
+<g id="compass" data-page-node-id="BBoS0LW6GTxUi7KMF6WRW4">
+<circle class="cmp" cx="884.0" cy="80.0" r="19" data-page-node-id="rabpKY0m3ltpqkkjntLD6O"/>
+<path class="cmpn" d="M884.0,65.0 L878.0,88.0 L890.0,88.0 Z" data-page-node-id="FHHCmbpW5Oe00yOoaw0lE3"/>
+<text class="cmpn2" x="884.0" y="102.0" text-anchor="middle" data-page-node-id="GH9mwlFrY328KylbD8qlcs">N</text>
+<g id="scalebar" data-page-node-id="voLCuFMBeXRVUSHQfn0Cru">
+<rect class="sb1" x="104.0" y="902.0" width="55.0" height="9" data-page-node-id="HV75GCHMmC5qEB5tNyRKpl"/>
+<rect class="sb2" x="159.0" y="902.0" width="55.0" height="9" data-page-node-id="ogVyFGVpPkDE74GJHcJJVz"/>
+<rect class="sb1" x="214.0" y="902.0" width="55.0" height="9" data-page-node-id="VY7TADSLemBDfTDnR7PmW2"/>
+<rect class="sb2" x="269.0" y="902.0" width="55.0" height="9" data-page-node-id="DaaAAgD9ppsuxWCvHPqVVE"/>
+<rect class="sb1" x="324.0" y="902.0" width="55.0" height="9" data-page-node-id="gCStF9LL37lLicBJym2Ro1"/>
+<text class="sb" x="100.0" y="926.0" data-page-node-id="M7Vtoft6ZrAJq9NyY7YPPE">0</text>
+<text class="sb" x="241.5" y="926.0" text-anchor="middle" data-page-node-id="vJF3ij89WLDtjFlW1eFmS6">5</text>
+<text class="sb" x="385.0" y="926.0" text-anchor="end" data-page-node-id="WxIJPofGi5oYuNhmH4FFzP">10 m</text>
+</g></g>
+<g id="panel" data-page-node-id="CHizeKd0lhiiO4nA7z1K8V">
+<rect class="panel" x="972.0" y="80.0" width="230" height="712.0" rx="8" data-page-node-id="FyZybJBHiJhsc6cd4A6ddu"/>
+<text class="pTitle" x="984.0" y="104.0" data-page-node-id="6oEpblLauHDD3Ai6UlwzCj">① 走廊加宽（净宽实测）</text>
+<text class="pItem" x="984.0" y="128.0" data-page-node-id="ss7lpDrZ12qja4nTZOUGpI">东西主廊（南北向）</text>
+<text class="pOld" x="1112.0" y="128.0" text-anchor="end" data-page-node-id="dHxI5RWGxfcPbOMPB5emx9">3.0 m</text>
+<text class="pNew" x="1190.0" y="128.0" text-anchor="end" data-page-node-id="x111mmDtaHLC5cWlehap3F">4.2 m</text>
+<text class="pItem" x="984.0" y="149.0" data-page-node-id="lTYaM7vcjLtNAV4GU4AZre">西支廊上段（东西向）</text>
+<text class="pOld" x="1112.0" y="149.0" text-anchor="end" data-page-node-id="P13bYlL7vlk9Kx6snejhqK">2.8 m</text>
+<text class="pNew" x="1190.0" y="149.0" text-anchor="end" data-page-node-id="FjXzLj3Y1ODD9XFbnjgB4R">4.0 m</text>
+<text class="pItem" x="984.0" y="170.0" data-page-node-id="L8isjyHiRyfxonFKl7hVFs">西支廊下段（东西向）</text>
+<text class="pOld" x="1112.0" y="170.0" text-anchor="end" data-page-node-id="k0lGMtehvm4oynjgDts7qF">1.6 m</text>
+<text class="pNew" x="1190.0" y="170.0" text-anchor="end" data-page-node-id="ByRZ4alA62ZoeLw5sV8NCg">2.8 m</text>
+<text class="pItem" x="984.0" y="191.0" data-page-node-id="dzAnwfdlu6SxupI7ZZB5CR">入口过渡进深</text>
+<text class="pOld" x="1112.0" y="191.0" text-anchor="end" data-page-node-id="E201ygDLtxfO2sMfh430VM">3.0 m</text>
+<text class="pNew" x="1190.0" y="191.0" text-anchor="end" data-page-node-id="ma9Bnnt9CH2EWFyqqi7m40">2.6 m</text>
+<text class="pNote" x="984.0" y="212.0" data-page-node-id="Qcd09AolfPnR0Z1RMBeyly">灰=原值 · 绿=新值</text>
+<line class="v4ln" x1="984.0" y1="223.0" x2="1010.0" y2="223.0" data-page-node-id="DnjW7xxdVGBsasSSatuPhL"/>
+<text class="pNote" x="1016.0" y="227.0" data-page-node-id="OxhxEeoizsB6TykTXtQrI0">红色虚线 = v4 原墙线</text>
+<text class="pNote" x="984.0" y="242.0" data-page-node-id="NcQJqcm0x4auRvEWFrGjdG">虚线与新墙线之间 = 加宽出来的面积</text>
+<line class="pDiv" x1="984.0" y1="251.0" x2="1190.0" y2="251.0" data-page-node-id="kKHLCwGdtBUdOuaqtl5miK"/>
+<text class="pTitle" x="984.0" y="263.0" data-page-node-id="4H9YY0GQn9cLtDM6zM6n2b">② 过道清障（图中 1~9 号）</text>
+<circle class="clrC2" cx="991.0" cy="279.0" r="7" data-page-node-id="FRTF2Zs516624nplRkkiYL"/>
+<text class="clrN2" x="991.0" y="283.0" text-anchor="middle" data-page-node-id="XT4yH0Na1Bo2ePkGcSUK6m">1</text>
+<text class="pNote" x="1003.0" y="283.0" data-page-node-id="h5XH1skZfsz6G6zQh44Fsv">接待台 + 台面屏 + 杯/笔筒</text>
+<circle class="clrC2" cx="991.0" cy="296.0" r="7" data-page-node-id="CbVreBrmIIqf8WREp83RuM"/>
+<text class="clrN2" x="991.0" y="300.0" text-anchor="middle" data-page-node-id="LyzZr7yhJ7lGBpezvm2H94">2</text>
+<text class="pNote" x="1003.0" y="300.0" data-page-node-id="fQp2QKvMGDSFqvgeykhRnU">访客椅</text>
+<circle class="clrC2" cx="991.0" cy="313.0" r="7" data-page-node-id="2EDT5NUpdEiM0esambWYKi"/>
+<text class="clrN2" x="991.0" y="317.0" text-anchor="middle" data-page-node-id="b3wSdEAtr1pgpKUayodqMh">3</text>
+<text class="pNote" x="1003.0" y="317.0" data-page-node-id="oqVm9KazfPtawQE5A32xAy">等候长椅（西弧）</text>
+<circle class="clrC2" cx="991.0" cy="330.0" r="7" data-page-node-id="GwQAmGOO9GVDKiUOeb2J4w"/>
+<text class="clrN2" x="991.0" y="334.0" text-anchor="middle" data-page-node-id="HeDXIGmGhzWyKWVLsEtW9A">4</text>
+<text class="pNote" x="1003.0" y="334.0" data-page-node-id="8PpoiPg64a1ISmpHD1FalO">等候长椅（东弧）</text>
+<circle class="clrC2" cx="991.0" cy="347.0" r="7" data-page-node-id="JYgTCEIyOZGpo6LbYAc3ve"/>
+<text class="clrN2" x="991.0" y="351.0" text-anchor="middle" data-page-node-id="7ifpFV9WFeNiNK2im2wqkC">5</text>
+<text class="pNote" x="1003.0" y="351.0" data-page-node-id="z1HGgAo7bStHd2qyWH7c5t">中心花坛 + 绿植</text>
+<circle class="clrC2" cx="991.0" cy="364.0" r="7" data-page-node-id="z3BMag3PHETfAkB9l1Hp1H"/>
+<text class="clrN2" x="991.0" y="368.0" text-anchor="middle" data-page-node-id="eqgue4v7E0wJdJHkvoezRF">6</text>
+<text class="pNote" x="1003.0" y="368.0" data-page-node-id="0XCtPBXgHQJrUJnY4J6fA7">贝壳喷泉</text>
+<circle class="clrC2" cx="991.0" cy="381.0" r="7" data-page-node-id="FnvHxyiVknFcmDRB9iRx8q"/>
+<text class="clrN2" x="991.0" y="385.0" text-anchor="middle" data-page-node-id="bVhGJUN7LbolDhV6ifny0G">7</text>
+<text class="pNote" x="1003.0" y="385.0" data-page-node-id="dwZe4rUBEBBVZwXSLA1zGC">贝壳罐</text>
+<circle class="clrC2" cx="991.0" cy="398.0" r="7" data-page-node-id="WHlLXrIHDBs0WplMAD3qEj"/>
+<text class="clrN2" x="991.0" y="402.0" text-anchor="middle" data-page-node-id="Ee5dE4KimmJ5vRhSOSoJGk">8</text>
+<text class="pNote" x="1003.0" y="402.0" data-page-node-id="OPdqpBi2IbcmXcICi8MbhC">主廊缆绳卷（西）</text>
+<circle class="clrC2" cx="991.0" cy="415.0" r="7" data-page-node-id="KDOOeFa5HDyWgjBeuJEReE"/>
+<text class="clrN2" x="991.0" y="419.0" text-anchor="middle" data-page-node-id="eRzPRYjDTUkmcQQphmmDUB">9</text>
+<text class="pNote" x="1003.0" y="419.0" data-page-node-id="VUtsU043uD9UQXtoEpySHO">主廊缆绳卷（东）</text>
+<text class="pNote2" x="984.0" y="436.0" data-page-node-id="reafRwtMcxxwtgQogjcBDo">走廊内实体家具 → 0 件（实测 15 个网格件）</text>
+<text class="pNote2" x="984.0" y="451.0" data-page-node-id="pdHQW7CCfckIYt2pJIwd4O">只留地面铺装；室外前庭 / 侧院景观保留</text>
+<line class="pDiv" x1="984.0" y1="461.0" x2="1190.0" y2="461.0" data-page-node-id="Z2FNqBjU6o3ud2uisQh3Zi"/>
+<text class="pTitle" x="984.0" y="473.0" data-page-node-id="eCiz98o8dzDvcHhMNUaMl2">③ 面积变化</text>
+<text class="pItem" x="984.0" y="493.0" data-page-node-id="YKLS2Bi3eLhHc6H8mieVxx">公共空间合计</text>
+<text class="pOld" x="1112.0" y="493.0" text-anchor="end" data-page-node-id="AK8raEOLmDG14rjyHbAQmg">114.0㎡</text>
+<text class="pNew" x="1190.0" y="493.0" text-anchor="end" data-page-node-id="VCtCeNaDuwU1qtBqLnqkBZ">132.5㎡</text>
+<text class="pItem" x="984.0" y="514.0" data-page-node-id="tgA1TrQDsJ6c3rz5UsqHa1">房间合计</text>
+<text class="pOld" x="1112.0" y="514.0" text-anchor="end" data-page-node-id="KRRk23LzthlRZIaGnfzp9b">351.6㎡</text>
+<text class="pNew" x="1190.0" y="514.0" text-anchor="end" data-page-node-id="ZKw5sv3wmHiH46XKSBlORe">337.1㎡</text>
+<text class="pItem" x="984.0" y="535.0" data-page-node-id="lEA1lOS7pKYHJmWUueGWTD">室内合计</text>
+<text class="pOld" x="1112.0" y="535.0" text-anchor="end" data-page-node-id="h0UgtZ5aTmWB88ewQEmuUk">465.6㎡</text>
+<text class="pNew" x="1190.0" y="535.0" text-anchor="end" data-page-node-id="hIm9aMhSBBCTuZfvKBoshE">469.6㎡</text>
+<text class="pItem" x="984.0" y="556.0" data-page-node-id="3DMfjGIw4EDiopuJRrPWv7">公共占比</text>
+<text class="pOld" x="1112.0" y="556.0" text-anchor="end" data-page-node-id="FEMifDiQsM8zihUodFBkUF">24.5%</text>
+<text class="pNew" x="1190.0" y="556.0" text-anchor="end" data-page-node-id="jGXuoqD3pfnD8Lk12I7T54">28.2%</text>
+<text class="pItem" x="984.0" y="577.0" data-page-node-id="pExXe8C2WcDkVlXZnDzk8d">包络 / 覆盖率</text>
+<text class="pVal" x="1190.0" y="577.0" text-anchor="end" data-page-node-id="luHpPZTJE06FAvIqd4dIm8">29.6×21.6 · 73.4%</text>
+<text class="pNote2" x="984.0" y="595.0" data-page-node-id="BDT1pq3EMMarzhh2kIu9PA">房间共让出 14.5㎡ 给交通</text>
+<text class="pNote2" x="984.0" y="610.0" data-page-node-id="59cEjZBY5Wxe3wRMQtLWqV">（公共 = 主廊 + 西支廊 + 圆厅）</text>
+<line class="pDiv" x1="984.0" y1="620.0" x2="1190.0" y2="620.0" data-page-node-id="1xmvDICg6KOT7Tij5eAXX0"/>
+<text class="pNote" x="984.0" y="630.0" data-page-node-id="RqXqLwiuWSLnLSMr0gG1XV">保留：错落非对称（镜像自洽仅 1/8）</text>
+</g>
+<g id="title" data-page-node-id="xSLDXZNrgQcrRR68UwSfm4">
+<text class="ttl" x="104.0" y="816.0" data-page-node-id="OAOkqtQ1LIFbDNCwRF7BTV">走廊加宽 · 过道清障方案 · v5</text>
+<text class="sub" x="104.0" y="838.0" data-page-node-id="MsbOPu1YOZoImKJidmo2Pa">在 v4 错落非对称布局基础上，只动「室内交通」：清空走廊/圆厅内全部家具，并把主廊与西支廊加宽</text>
+<text class="sub" x="104.0" y="856.0" data-page-node-id="r00pZZjgqUjcYGySYHZfQF">包络 29.6×21.6m 不变 · 外轮廓/退台/房间外墙一律不动 · 8 樘房门位置按新墙线联动</text>
+<text class="sub" x="104.0" y="874.0" data-page-node-id="LXmgtsEdkp2IA8TICrLtNQ">房间 337.1㎡ · 公共 132.5㎡ · 室内 469.6㎡ · 公共占比 28.2%（v4 为 24.5%）
+<text class="sub2" x="104.0" y="892.0" data-page-node-id="TlTMSmAXOLGKnuX4FOnofI">几何校验：_verify/gen_plan_v5_geom.py —— 重叠 0 · 公共压房间 0 · 门 8/8 通向公共廊 · 零死区</text>
+</g></svg></div>
+</div><script>
+var b=document.body,t=document.getElementById('tg');
+t.onclick=function(){b.dataset.theme=b.dataset.theme==='dark'?'light':'dark';};
+</script></body></html>

@@ -1,0 +1,25 @@
+# ===== 备份/快照（git 自带版本历史，无需 .bak）=====
+*.bak
+*.bak[0-9]
+office-3d-taskboard.html.bak*
+
+# ===== Python 运行时 =====
+__pycache__/
+*.pyc
+
+# ===== 系统杂项 =====
+.DS_Store
+Thumbs.db
+_wtest.tmp
+
+# ===== 生成产物（脚本产出，不入库；clone 后跑脚本再生）=====
+tasks-data/tasks.js
+tasks-data/inbox_tasks.js
+
+# ===== inbox 归档（运行时产生）=====
+inbox/_imported/
+inbox/processed/
+
+# ===== 旧版/副本（项目说明标注"建议删除"，不入库）=====
+board_export_skill-副本*.md
+import_inbox.py
