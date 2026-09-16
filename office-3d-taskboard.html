@@ -600,7 +600,7 @@ const MATS={
   rope: mcolor('#e0c890'),
   brass: mcolor('#e8c060'),
   glass: new THREE.MeshPhysicalMaterial({color:'#dff0ff',roughness:0.05,metalness:0,transparent:true,opacity:0.3,transmission:0.6}),
-  glassWall: new THREE.MeshPhysicalMaterial({color:'#a8895a',roughness:0.06,metalness:0.05,transparent:true,opacity:0.32,side:THREE.DoubleSide,depthWrite:false}),
+  glassWall: new THREE.MeshPhysicalMaterial({color:'#a8895a',roughness:0.06,metalness:0.05,transparent:true,opacity:0.32,side:THREE.DoubleSide,depthWrite:false,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1}),
   louverBlade: mcolor('#e0d5c5',{roughness:0.5,metalness:0.05}),
   glassFrame: mcolor('#9a9a92',{roughness:0.4,metalness:0.3}),
   shellPink: mcolor('#f0a8b0'),
@@ -636,7 +636,7 @@ function animateCameraTo(tx,ty,tz,lookX,lookY,lookZ,duration=1.6){
   gsap.killTweensOf(camera.position);
   gsap.killTweensOf(controls.target);
   gsap.to(camera.position,{x:tx,y:ty,z:tz,duration,ease:'power3.out',
-    onComplete:()=>{if(id===animId)controls.enableDamping=true;}
+    onComplete:()=>{if(id===animId){controls.enableDamping=true;controls.dampingFactor=0.25;}}
   });
   gsap.to(controls.target,{x:lookX,y:lookY,z:lookZ,duration:duration*0.9,ease:'power2.inOut',
     onUpdate:()=>controls.update()
@@ -678,7 +678,7 @@ function animateToOverview(duration=1.8){
   controls.minPolarAngle=_OVERVIEW.minP;
   controls.update();
 }
-controls.enableDamping=true;controls.dampingFactor=0.08;controls.minDistance=9;controls.maxDistance=48;
+controls.enableDamping=true;controls.dampingFactor=0.25;controls.minDistance=9;controls.maxDistance=48;
 controls.maxPolarAngle=Math.PI/2.3;controls.minPolarAngle=0.22;
 controls.minAzimuthAngle=-Infinity;controls.maxAzimuthAngle=Infinity;
 controls.update();
@@ -790,7 +790,7 @@ function createDoor(parentGroup, gapW=0.8, doorH=2, isDouble=false, zoneId='', u
   const leaves=isDouble?2:1, lw=gapW/leaves;
   /* 玻璃门：同色系但略深（opacity 0.42 vs 墙 0.28），区分"可活动门扇"与"固定玻璃段" */
   const dm = useGlass
-    ? new THREE.MeshPhysicalMaterial({color:'#9a7a4a',roughness:0.08,metalness:0.05,transparent:true,opacity:0.45,side:THREE.DoubleSide,depthWrite:false})
+    ? new THREE.MeshPhysicalMaterial({color:'#9a7a4a',roughness:0.08,metalness:0.05,transparent:true,opacity:0.45,side:THREE.DoubleSide,depthWrite:false,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1})
     : new THREE.MeshToonMaterial({map:woodTex('#c8b490','90,72,48'),gradientMap:_gradientMap,side:THREE.DoubleSide});
   for(let i=0;i<leaves;i++){
     const lg=new THREE.Group();
@@ -1006,7 +1006,7 @@ function createRoom(zone){
   group.add(fc);allRoomFloorMeshes.push(fc);
 
   const useGlass = true;   // 全部房间：门墙落地玻璃+百叶，其余墙主题色
-  const wm = useGlass ? mcolor(ROOM_WALL_COLORS[zone.id]||'#faf2e2') : MATS.wallInner;
+  const wm = useGlass ? mcolor(ROOM_WALL_COLORS[zone.id]||'#faf2e2', {polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1}) : mcolor('#faf2e2', {polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
   function wallSeg(x,z,sw,sd){
     const seg=new THREE.Mesh(new THREE.BoxGeometry(sw,wallH,sd),wm);
     seg.position.set(x,wallH/2,z);seg.receiveShadow=true;seg.castShadow=true;group.add(seg);
