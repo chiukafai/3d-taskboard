@@ -1,0 +1,79 @@
+{
+  "_说明": "3D 看板任务接入 —— 唯一配置文件。所有相对路径都相对『本文件所在目录』解析，整个文件夹搬到哪台机器都能跑；不包含任何 agent 专属目录（如 ~/.workbuddy）或绝对路径。容器/CI 里用 BOARD_* 环境变量覆盖即可，不必改本文件。",
+  "_可用环境变量": [
+    "BOARD_CONFIG     指定别的配置文件路径",
+    "BOARD_DATA_DIR   整体替换数据目录（db/inbox/归档/json 都跟着走）",
+    "BOARD_HOST       监听地址（默认 0.0.0.0）",
+    "BOARD_PORT       监听端口（默认 8787）",
+    "BOARD_TOKEN      写操作令牌；留空=不校验（仅建议在受信内网使用）",
+    "BOARD_POLL       看板前端轮询秒数（默认 20）"
+  ],
+
+  "paths": {
+    "dataDir": "data",
+    "dbFile": "data/taskboard.db",
+    "inboxDir": "data/inbox",
+    "archiveDir": "data/inbox/_imported",
+    "emitJs": "tasks-data/tasks.js",
+    "emitJson": "data/tasks.json",
+    "boardHtml": "office-3d-taskboard.html",
+    "staticRoot": "."
+  },
+
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8787,
+    "token": "",
+    "cors": "*",
+    "autoIngestSec": 30,
+    "_deny说明": "静态托管时不对外的路径（前缀或后缀命中即 403）。看板只需要 .html/.js/.glb，其余一律封掉，避免把任务清单、截图、备份、引擎源码、配置暴露到局域网。",
+    "deny": ["/data/", "/taskboard/", "/.workbuddy/", "/.git/", "/_verify/", "/node_modules/",
+             "/inbox/", "/_shots/", "/agent-templates/", "/office-3d-items/",
+             "/board.config.json", "/Dockerfile", "/docker-compose.yml", "/.dockerignore",
+             ".bak", ".db", ".db-wal", ".db-shm", ".py", ".md", ".pyc", ".env", ".log", ".tar.gz"]
+  },
+
+  "defaults": {
+    "status": "todo",
+    "priority": "medium",
+    "project": "未归类"
+  },
+
+  "unassignedKey": "_unassigned",
+
+  "departments": {
+    "ceo": "CEO 战略办公室",
+    "cfo": "CFO 财务中心",
+    "cto": "CTO 技术中心",
+    "cpo": "CPO 产品设计室",
+    "cmo": "CMO 营销中心",
+    "coo": "COO 运营中心",
+    "cro": "CRO 风控中心",
+    "meeting": "战略会议室"
+  },
+
+  "aliases": {
+    "财务": "cfo",
+    "对账": "cfo",
+    "报表": "cfo",
+    "营销": "cmo",
+    "小红书": "cmo",
+    "技术": "cto",
+    "部署": "cto",
+    "运营": "coo",
+    "发货": "coo",
+    "风控": "cro",
+    "合规": "cro",
+    "产品": "cpo",
+    "设计": "cpo",
+    "战略": "ceo",
+    "会议": "meeting",
+    "复盘": "meeting"
+  },
+
+  "limits": {
+    "title": 80,
+    "desc": 400,
+    "project": 40
+  }
+}

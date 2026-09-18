@@ -1,0 +1,37 @@
+# ===== 行尾规范化（不依赖各台机器的 core.autocrlf 设置）=====
+# 起因：.bat 若以 LF 行尾入库，在 Windows 上双击会「静默不执行」（cmd.exe 不认 LF），
+#       而 .sh 若以 CRLF 入库，bash 会报 bad interpreter。故按类型锁死。
+
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+*.ps1    text eol=crlf
+
+*.sh     text eol=lf
+*.py     text eol=lf
+*.mjs    text eol=lf
+*.js     text eol=lf
+*.json   text eol=lf
+*.jsonl  text eol=lf
+*.md     text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.html   text eol=lf
+*.css    text eol=lf
+*.txt    text eol=lf
+Dockerfile text eol=lf
+
+# ===== 二进制：禁止任何行尾/编码转换 =====
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.ico    binary
+*.glb    binary
+*.gltf   binary
+*.ttf    binary
+*.woff   binary
+*.woff2  binary
+*.db     binary
+*.zip    binary
+*.tar.gz binary

@@ -23,3 +23,14 @@ inbox/processed/
 # ===== 旧版/副本（项目说明标注"建议删除"，不入库）=====
 board_export_skill-副本*.md
 import_inbox.py
+
+# ===== taskboard 运行时数据（含真实任务内容，公开仓库绝不可入库）=====
+data/
+!data/inbox/.gitkeep
+tasks-data/tasks.js.tmp
+*.db
+*.db-wal
+*.db-shm
+
+# ===== 引擎缓存 =====
+taskboard/__pycache__/

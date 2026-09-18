@@ -1,0 +1,28 @@
+# 复制下面任意一段，贴进 agent 的指令配置里（装一次即可，不用每次会话都贴）
+
+## ① 一行版（最省事 · 前提：那个 agent 能读本地文件）
+
+任务上报规则见 C:\Users\Perfect\Desktop\3d-taskboard-main\agent-templates\SPEC.md，每次会话结束前按它上报，看板地址 http://127.0.0.1:8787，source 填 hermes。
+
+## ② 六行版（agent 读不了本地文件时用 · 自带全部信息）
+
+【任务上报规则】本会话完成或推进的每件事都要上报到 3D 看板。
+地址：POST http://127.0.0.1:8787/api/tasks
+字段：{"title":"必填","dept":"cfo|cto|cmo|ceo|cpo|coo|cro|meeting","status":"todo|in_progress|done|blocked","priority":"high|medium|low","source":"hermes","desc":"一句话"}
+未完成的也要报（用 in_progress）；卡住的用 blocked。重复上报=更新，不会变两条。一次会话最多报 3 条。
+若 HTTP 不通，改往 C:\Users\Perfect\Desktop\3d-taskboard-main\data\inbox 写 .jsonl 文件（一行一个任务对象），服务恢复后自动收。
+
+## ③ 装到哪里（从此永久免贴）
+
+| agent | 写进哪里 |
+|---|---|
+| Claude Code | 项目根 `CLAUDE.md` 或全局 `~/.claude/CLAUDE.md` |
+| Cursor | 项目根 `.cursorrules` 或 `.cursor/rules/*.mdc` |
+| Hermes / 自建 agent | 其 system prompt 字段 |
+| 支持 AGENTS.md 的 | 项目根 `AGENTS.md` |
+| WorkBuddy | 已装成技能：说「记到看板」即可 |
+
+本目录已生成 `AGENTS.md` / `CLAUDE.md` / `.cursorrules`（内容相同），直接复制到目标位置即可。
+
+项目名：Hailu-SC-EMS
+生成时间：2026-09-17 15:31

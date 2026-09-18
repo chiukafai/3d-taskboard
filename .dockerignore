@@ -1,0 +1,15 @@
+# 构建镜像时排除的东西（不影响运行时的挂载卷）
+.git
+.gitignore
+node_modules
+_verify
+_shots
+*.bak
+*.bak_*
+*.bak_pre_*
+__pycache__
+*.pyc
+data
+tasks-data/*.js
+**/*.tmp
+*.log
